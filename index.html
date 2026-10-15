@@ -1,0 +1,754 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python Buddy · Learn Python by Playing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1E2A5A; --ink-soft:#5B6694;
+  --sky:#DCEBFF; --lav:#E7E0FF; --blush:#FFE4EF; --mint:#D7F7EA;
+  --gold:#FFB627; --gold-deep:#FF8A3D;
+  --pink:#D6336C; --pink-deep:#A61E57;
+  --ok:#12A36B; --bad:#E03A4E;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:'Nunito',system-ui,sans-serif; font-weight:600;
+  background:linear-gradient(160deg,#DDEBFF 0%,#ECE6FF 55%,#FFEAF3 100%) fixed;
+}
+h1,h2,h3{font-family:'Fredoka',system-ui,sans-serif; margin:0; color:var(--ink)}
+h3{font-size:1.05rem; margin-bottom:10px}
+.app{max-width:1240px; margin:0 auto; padding:18px}
+.card{background:#fff; border-radius:26px; padding:18px; box-shadow:0 12px 32px rgba(80,90,200,.12)}
+button{font:inherit; font-weight:800; color:var(--ink); cursor:pointer}
+button:focus-visible,textarea:focus-visible{outline:3px solid var(--ink); outline-offset:2px}
+
+/* ---------- clean & catchy gaming hero ---------- */
+.hero{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding:16px 24px;
+  margin-bottom:18px;
+  border-radius:24px;
+  background:linear-gradient(135deg, #C7DCFF 0%, #D8CAFF 50%, #FFD7E8 100%);
+  border:2px solid rgba(255,255,255,0.85);
+  box-shadow:0 12px 30px rgba(70,80,200,0.14), inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+/* Brand */
+.brand{display:flex; gap:14px; align-items:center}
+.logo-box{
+  width:52px;
+  height:52px;
+  border-radius:16px;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  font-size:32px;
+  line-height:1;
+  box-shadow:0 6px 16px rgba(50,60,160,0.14), 0 0 0 2px rgba(255,255,255,0.9);
+  transition:transform .2s ease;
+}
+.hero:hover .logo-box{transform:rotate(-4deg) scale(1.05)}
+.brand-text h1{
+  font-size:1.85rem;
+  line-height:1.15;
+  color:var(--ink);
+  letter-spacing:-0.4px;
+}
+.brand-text p{
+  margin:2px 0 0;
+  color:var(--ink-soft);
+  font-size:0.88rem;
+  font-weight:700;
+}
+
+/* Unified Gamer HUD */
+.gamer-hud{
+  display:flex;
+  align-items:center;
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:2px solid rgba(255,255,255,0.95);
+  border-radius:20px;
+  padding:8px 18px;
+  box-shadow:0 8px 24px rgba(40,50,150,0.10);
+  gap:16px;
+}
+.hud-item{display:flex; align-items:center; gap:10px}
+.hud-sep{width:1px; height:28px; background:#E2E6FA}
+
+/* Level & XP inside HUD */
+.lvl-badge{
+  width:42px;
+  height:42px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  font-family:'Fredoka',sans-serif;
+  font-weight:700;
+  font-size:1.3rem;
+  color:#fff;
+  background:linear-gradient(135deg,var(--gold),var(--gold-deep));
+  box-shadow:0 4px 12px rgba(255,138,61,0.4);
+  flex:none;
+}
+.xpwrap{min-width:130px}
+.rank-name{
+  font-family:'Fredoka',sans-serif;
+  font-size:0.95rem;
+  font-weight:700;
+  color:var(--ink);
+  line-height:1.1;
+}
+.xpbar{
+  height:8px;
+  background:#EEF1FF;
+  border-radius:999px;
+  overflow:hidden;
+  margin:4px 0 2px;
+}
+.xpbar i{
+  display:block;
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,var(--gold),var(--gold-deep));
+  border-radius:999px;
+  transition:width .5s ease;
+}
+.xpwrap small{
+  color:var(--ink-soft);
+  font-size:0.75rem;
+  font-weight:800;
+  display:block;
+}
+
+/* Streak & Total XP inside HUD */
+.hud-icon{font-size:1.35rem; line-height:1}
+.hud-stat{display:flex; align-items:baseline; gap:5px; white-space:nowrap}
+.hud-stat b{
+  font-family:'Fredoka',sans-serif;
+  font-size:1.1rem;
+  color:var(--ink);
+}
+.hud-stat small{
+  font-size:0.86rem;
+  font-weight:800;
+  color:var(--ink-soft);
+}
+
+@media(max-width:960px){
+  .hero{flex-direction:column; align-items:stretch; gap:14px; padding:16px}
+  .gamer-hud{justify-content:space-between; flex-wrap:wrap; gap:10px}
+}
+
+/* ---------- layout ---------- */
+.grid{display:grid; grid-template-columns:320px 1fr; gap:16px; align-items:start}
+aside{display:flex; flex-direction:column; gap:16px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+/* ---------- quest map ---------- */
+.map{display:flex; flex-direction:column; gap:8px}
+.node{
+  display:flex; align-items:center; gap:12px; width:100%; padding:9px 12px; border:none; border-radius:18px;
+  background:#F1F3FF; text-align:left; transition:transform .15s ease;
+}
+.node:hover:not(:disabled){transform:translateX(3px)}
+.node .ico{width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:#fff; font-size:1.3rem}
+.node small{display:block; color:var(--ink-soft); font-weight:700}
+.node.done{background:var(--mint)}
+.node.current{background:linear-gradient(135deg,#FFE9B8,#FFD3A1); box-shadow:0 8px 18px rgba(255,138,61,.25)}
+.node:disabled{opacity:.55; cursor:not-allowed}
+
+/* ---------- badges ---------- */
+.badges{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
+.badge{background:var(--lav); border-radius:16px; padding:10px 4px; text-align:center; font-size:.72rem; line-height:1.2}
+.badge span{display:block; font-size:1.6rem}
+.badge.locked{filter:grayscale(1); opacity:.45}
+.linkbtn{margin-top:12px; background:none; border:none; color:var(--ink-soft); text-decoration:underline; font-weight:700; font-size:.8rem; padding:0}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px}
+.tab-btn{border:none; border-radius:999px; padding:9px 18px; background:#F1F3FF; color:var(--ink-soft)}
+.tab-btn.active{background:var(--ink); color:#fff; box-shadow:0 6px 14px rgba(30,42,90,.25)}
+
+/* ---------- buttons ---------- */
+.btn{border:none; border-radius:16px; padding:11px 20px; background:linear-gradient(135deg,var(--gold),var(--gold-deep)); box-shadow:0 8px 18px rgba(255,138,61,.35)}
+.btn:hover{filter:brightness(1.05)}
+.btn.ghost{background:#F1F3FF; box-shadow:none}
+.btn:disabled{opacity:.6; cursor:not-allowed}
+.row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+
+/* ---------- chat ---------- */
+.modes{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px}
+.mode{border:none; border-radius:999px; padding:7px 16px; background:#F1F3FF; color:var(--ink-soft)}
+.mode.active{background:var(--ink); color:#fff}
+.log{height:420px; overflow-y:auto; background:#F7F8FF; border-radius:22px; padding:16px; display:flex; flex-direction:column; gap:12px}
+.msg{max-width:88%; padding:12px 16px; border-radius:20px; line-height:1.55; animation:pop .2s ease}
+.msg.bot{align-self:flex-start; background:#fff; color:var(--ink); border-bottom-left-radius:6px; box-shadow:0 6px 16px rgba(80,90,200,.12)}
+.msg.user{align-self:flex-end; background:linear-gradient(135deg,var(--pink),var(--pink-deep)); color:#fff; border-bottom-right-radius:6px; box-shadow:0 8px 18px rgba(166,30,87,.28)}
+.msg code{background:#F1F3FF; padding:1px 6px; border-radius:6px; font-family:ui-monospace,Consolas,monospace; font-size:.92em}
+.msg.user code{background:rgba(255,255,255,.22)}
+.cb{margin:8px 0 2px; border-radius:14px; background:var(--ink); overflow:hidden}
+.cb pre{margin:0; padding:12px 14px; overflow-x:auto; color:#EAF0FF; font-family:ui-monospace,Consolas,monospace; font-size:.9rem; font-weight:500}
+.cb pre code{background:none; padding:0; color:inherit}
+.cb .try{display:block; width:100%; border:none; padding:7px; background:rgba(255,255,255,.14); color:#fff}
+.cb .try:hover{background:rgba(255,255,255,.24)}
+.typing{display:flex; gap:5px; padding:14px 16px}
+.typing i{width:8px; height:8px; border-radius:50%; background:#B7BDE8; animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s} .typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{50%{transform:translateY(-4px); background:var(--pink)}}
+@keyframes pop{from{opacity:0; transform:translateY(6px) scale(.98)}}
+.chips{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0}
+.chip{border:none; border-radius:999px; padding:7px 14px; font-size:.88rem}
+.chip:nth-child(1){background:var(--sky)} .chip:nth-child(2){background:var(--blush)} .chip:nth-child(3){background:var(--mint)} .chip:nth-child(4){background:var(--lav)}
+.composer{display:flex; gap:10px; align-items:flex-end}
+textarea{width:100%; border:2px solid #E6E9FF; border-radius:16px; background:#FAFBFF; padding:11px 14px; font:inherit; font-weight:600; color:var(--ink); resize:vertical}
+textarea:focus{border-color:#8C9CFF; box-shadow:0 0 0 4px rgba(140,156,255,.2); outline:none}
+.editor{background:var(--ink); color:#EAF0FF; border-color:var(--ink); font-family:ui-monospace,Consolas,monospace; font-size:.92rem; font-weight:500; min-height:150px; tab-size:4}
+.out{margin:12px 0 0; background:#F7F8FF; border-radius:14px; padding:12px 14px; white-space:pre-wrap; font-family:ui-monospace,Consolas,monospace; font-size:.9rem; font-weight:500}
+.out.err{background:#FFF0F2; color:#9B1C2E}
+
+/* ---------- quest ---------- */
+.qhead{display:flex; justify-content:space-between; gap:12px; align-items:flex-start}
+.qhead h2{display:inline; font-size:1.5rem}
+.qhead p{margin:4px 0 0; color:var(--ink-soft)}
+.qemoji{font-size:1.8rem}
+.hearts{font-size:1.4rem; white-space:nowrap}
+.dots{display:flex; gap:6px; margin:14px 0}
+.dots i{flex:1; height:8px; border-radius:999px; background:#EEF1FF}
+.dots i.on{background:var(--ok)} .dots i.now{background:var(--gold)}
+.qcard{background:#F7F8FF; border-radius:22px; padding:18px}
+.qtext{font-weight:800; font-size:1.1rem; margin-bottom:10px}
+.qcode{margin:0 0 12px; background:var(--ink); color:#EAF0FF; padding:12px 14px; border-radius:14px; font-family:ui-monospace,Consolas,monospace; font-size:.92rem; font-weight:500; overflow-x:auto}
+.opts{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+@media(max-width:600px){.opts{grid-template-columns:1fr}}
+.opt{display:flex; gap:10px; align-items:center; text-align:left; border:2px solid #E6E9FF; background:#fff; border-radius:16px; padding:12px 14px; transition:transform .12s ease}
+.opt b{width:28px; height:28px; border-radius:9px; display:grid; place-items:center; background:var(--lav); flex:none}
+.opt:hover:not(:disabled){transform:translateY(-2px); border-color:#8C9CFF}
+.opt.right{background:var(--mint); border-color:var(--ok)}
+.opt.wrong{background:#FFE4E8; border-color:var(--bad); animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)} 75%{transform:translateX(5px)}}
+.fb{margin-top:14px; padding:12px 14px; border-radius:14px; background:#fff}
+.fb.good{border-left:5px solid var(--ok)} .fb.bad{border-left:5px solid var(--bad)}
+.duel-tag{display:inline-block; background:var(--pink); color:#fff; border-radius:999px; padding:3px 12px; font-size:.8rem; margin-bottom:8px}
+.expect small{color:var(--ink-soft)}
+.expect pre{margin:4px 0 12px; background:#fff; padding:8px 12px; border-radius:12px; font-family:ui-monospace,Consolas,monospace; font-weight:500}
+.end{text-align:center; padding:26px 10px}
+.end .big{font-size:64px}
+.end .row{justify-content:center}
+.stars{font-size:2rem; margin:6px 0}
+.empty{text-align:center; color:var(--ink-soft); padding:50px 10px}
+
+/* ---------- celebration ---------- */
+#party{position:fixed; inset:0; pointer-events:none; z-index:9999; overflow:hidden}
+#party i{position:absolute; top:-20px; border-radius:3px; opacity:0; animation-name:fall; animation-timing-function:ease-in; animation-fill-mode:forwards}
+@keyframes fall{0%{opacity:1; transform:translateY(0) rotate(0)} 100%{opacity:0; transform:translateY(105vh) rotate(720deg)}}
+.toast{
+  position:absolute; top:20%; left:50%; display:flex; gap:12px; align-items:center; opacity:0;
+  background:#fff; font-family:'Fredoka',sans-serif; font-size:2rem; font-weight:700; padding:14px 28px; border-radius:999px;
+  box-shadow:0 18px 40px rgba(80,90,200,.3); animation:toast 2.6s ease forwards; white-space:nowrap;
+}
+.toast small{font-family:'Nunito',sans-serif; font-size:.95rem; padding:4px 12px; border-radius:999px; background:linear-gradient(135deg,var(--gold),var(--gold-deep))}
+@keyframes toast{
+  0%{opacity:0; transform:translate(-50%,24px) scale(.6)} 14%{opacity:1; transform:translate(-50%,0) scale(1.1)}
+  24%{transform:translate(-50%,0) scale(1)} 80%{opacity:1; transform:translate(-50%,0)} 100%{opacity:0; transform:translate(-50%,-24px)}
+}
+@media(max-width:600px){.toast{font-size:1.4rem; padding:10px 18px}}
+.notice{position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:10px 18px; border-radius:999px; font-weight:800; opacity:0; pointer-events:none; transition:opacity .25s; z-index:9998}
+.notice.show{opacity:1}
+
+/* ---------- 10-Chat Milestone Flash Challenge ---------- */
+.flash-overlay{
+  position:fixed; inset:0; background:rgba(20,28,65,.68);
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  z-index:10000; padding:16px; animation:flashFadeIn .25s ease-out;
+}
+@keyframes flashFadeIn{from{opacity:0}to{opacity:1}}
+.flash-card{
+  background:#fff; border-radius:28px; max-width:500px; width:100%;
+  padding:24px 26px; box-shadow:0 24px 60px rgba(18,26,60,.35);
+  position:relative; overflow:hidden; animation:flashCardPop .3s cubic-bezier(.18,.89,.32,1.28);
+}
+@keyframes flashCardPop{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
+.flash-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px}
+.flash-tag{
+  background:linear-gradient(135deg,var(--gold),var(--gold-deep)); color:var(--ink);
+  font-family:'Fredoka',sans-serif; font-size:.85rem; font-weight:700;
+  padding:5px 14px; border-radius:999px; box-shadow:0 4px 12px rgba(255,138,61,.3);
+  display:flex; align-items:center; gap:6px;
+}
+.flash-topic{font-size:.8rem; color:var(--ink-soft); font-weight:700; background:var(--sky); padding:4px 12px; border-radius:999px}
+.flash-q{font-size:1.12rem; font-weight:800; color:var(--ink); line-height:1.4; margin-bottom:12px}
+.flash-code{
+  background:var(--ink); color:#EAF0FF; padding:12px 14px; border-radius:14px;
+  font-family:ui-monospace,Consolas,monospace; font-size:.9rem; font-weight:500;
+  margin:0 0 14px; overflow-x:auto;
+}
+.flash-opts{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+@media(max-width:500px){.flash-opts{grid-template-columns:1fr}}
+.flash-opt{
+  display:flex; align-items:center; gap:10px; text-align:left; border:2px solid #E6E9FF;
+  background:#FAFBFF; border-radius:16px; padding:11px 13px; font-family:'Nunito',sans-serif;
+  font-weight:700; font-size:.92rem; color:var(--ink); cursor:pointer; transition:all .15s ease;
+}
+.flash-opt:hover:not(:disabled){transform:translateY(-2px); border-color:#8C9CFF; background:#fff; box-shadow:0 6px 14px rgba(140,156,255,.2)}
+.flash-opt b{width:28px; height:28px; border-radius:9px; display:grid; place-items:center; background:var(--lav); flex:none; font-family:'Fredoka',sans-serif}
+.flash-opt.selected-right{background:var(--mint); border-color:var(--ok); color:var(--ok)}
+.flash-opt.selected-wrong{background:#FFE4E8; border-color:var(--bad); color:var(--bad)}
+
+/* Boom result */
+.flash-result{text-align:center; padding:16px 8px}
+.boom-icon{font-size:4.8rem; line-height:1; display:inline-block; animation:boomPop .45s cubic-bezier(.18,.89,.32,1.4)}
+@keyframes boomPop{0%{transform:scale(.2) rotate(-25deg); opacity:0} 60%{transform:scale(1.35) rotate(15deg); opacity:1} 100%{transform:scale(1) rotate(0)}}
+.boom-title{font-size:2.2rem; color:#FF5E00; text-shadow:0 4px 18px rgba(255,94,0,.4); margin:8px 0 4px; letter-spacing:.5px; animation:boomShake .5s ease-in-out}
+@keyframes boomShake{0%,100%{transform:scale(1) translate(0,0)} 20%{transform:scale(1.1) translate(-8px,6px)} 40%{transform:scale(1.08) translate(8px,-6px)} 60%{transform:scale(1.05) translate(-4px,4px)} 80%{transform:scale(1.02) translate(4px,-2px)}}
+.boom-sub{font-size:1.1rem; font-weight:800; color:var(--ok); margin:0}
+.flash-card.booming{animation:boomCard .6s cubic-bezier(.25,1,.5,1); box-shadow:0 0 50px rgba(255,138,61,.8), 0 0 100px rgba(255,182,39,.4)}
+@keyframes boomCard{0%{transform:scale(.95)} 25%{transform:scale(1.08) rotate(1deg)} 50%{transform:scale(1.04) rotate(-1deg)} 75%{transform:scale(1.02)} 100%{transform:scale(1)}}
+.boom-ring{
+  position:absolute; top:50%; left:50%; width:140px; height:140px; margin-top:-70px; margin-left:-70px;
+  border-radius:50%; border:8px solid rgba(255,138,61,.8); pointer-events:none;
+  animation:shockwave .8s cubic-bezier(.1,.8,.3,1) forwards;
+}
+@keyframes shockwave{0%{transform:scale(.2); opacity:1} 100%{transform:scale(3.5); opacity:0}}
+
+/* Wrong result */
+.wrong-icon{font-size:3.8rem; line-height:1; animation:shakeWrong .4s ease}
+@keyframes shakeWrong{0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-12px)} 40%,80%{transform:translateX(12px)}}
+.wrong-title{font-size:2.2rem; color:var(--bad); margin:6px 0; animation:shakeWrong .4s ease}
+.wrong-ans{font-size:.95rem; color:var(--ink-soft); margin:4px 0 14px}
+.learn-next-box{
+  display:flex; gap:12px; align-items:flex-start; text-align:left;
+  background:linear-gradient(135deg,#FFF6E5,#FFF0DB); border-left:5px solid var(--gold-deep);
+  border-radius:16px; padding:14px 16px; margin:14px 0 16px; box-shadow:0 4px 14px rgba(255,138,61,.12);
+}
+.learn-icon{font-size:1.7rem; flex:none}
+.learn-next-box b{color:var(--ink); font-size:.92rem}
+.learn-next-box p{margin:4px 0 0; font-size:.9rem; color:#7A4215; font-weight:700; line-height:1.45}
+.flash-timer{font-size:.78rem; color:var(--ink-soft); margin-top:8px}
+
+.chat-counter-pill{
+  margin-left:auto; font-size:.8rem; font-weight:800; color:var(--ink-soft);
+  background:#F1F3FF; padding:5px 12px; border-radius:999px; display:flex; align-items:center; gap:4px;
+  cursor:pointer; transition:transform .12s ease;
+}
+.chat-counter-pill:hover{transform:scale(1.04); background:#E6E9FF}
+.chat-counter-pill b{color:var(--pink)}
+
+@media(prefers-reduced-motion:reduce){#party i{display:none} *{animation-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="hero">
+    <div class="brand">
+      <div class="logo-box">
+        <span class="logo">🐍</span>
+      </div>
+      <div class="brand-text">
+        <h1>Python Buddy</h1>
+        <p>Level up your Python, one quest at a time.</p>
+      </div>
+    </div>
+
+    <div class="gamer-hud">
+      <div class="hud-item hud-level" title="Player Level & Rank">
+        <div class="lvl-badge" id="lvlNum">1</div>
+        <div class="xpwrap">
+          <div class="rank-name" id="title">Newbie</div>
+          <div class="xpbar"><i id="xpFill"></i></div>
+          <small id="xpText">0 / 100 XP</small>
+        </div>
+      </div>
+      <div class="hud-sep"></div>
+      <div class="hud-item hud-streak" title="Daily Streak">
+        <span class="hud-icon">🔥</span>
+        <div class="hud-stat">
+          <b id="streak">0</b>
+          <small>day streak</small>
+        </div>
+      </div>
+      <div class="hud-sep"></div>
+      <div class="hud-item hud-xp" title="Total XP Earned">
+        <span class="hud-icon">⭐</span>
+        <div class="hud-stat">
+          <b id="xpTotal">0</b>
+          <small>XP</small>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <aside>
+      <section class="card"><h3>🗺️ Quest map</h3><div id="map" class="map"><div class="empty">Loading quests…</div></div></section>
+      <section class="card">
+        <h3>🏅 Badges</h3><div id="badges" class="badges"></div>
+        <button class="linkbtn" id="reset">Reset progress</button>
+      </section>
+    </aside>
+
+    <section class="card">
+      <nav class="tabs" role="tablist">
+        <button class="tab-btn active" data-tab="chat">💬 Buddy chat</button>
+        <button class="tab-btn" data-tab="quest">⚔️ Quest</button>
+        <button class="tab-btn" data-tab="lab">🧪 Code lab</button>
+      </nav>
+
+      <!-- CHAT -->
+      <div class="tab" id="tab-chat">
+        <div class="modes" id="modes">
+          <button class="mode active" data-mode="Learn">Learn</button>
+          <button class="mode" data-mode="Practice">Practice</button>
+          <button class="mode" data-mode="Quiz">Quiz</button>
+          <button class="mode" data-mode="Debug">Debug</button>
+          <div class="chat-counter-pill" id="chatCounterPill" title="Milestone challenge every 10 messages">⚡ Challenge: <b id="chatCountNum">0</b>/10</div>
+        </div>
+        <div class="log" id="log" aria-live="polite"></div>
+        <div class="chips" id="chips">
+          <button class="chip" data-mode="Learn" data-text="Explain Python loops.">Explain loops</button>
+          <button class="chip" data-mode="Practice" data-text="Give me one small coding mission.">Give me a mission</button>
+          <button class="chip" data-mode="Quiz" data-text="Quiz me on Python basics. One question.">Quiz me</button>
+          <button class="chip" data-text="Give me one small hint about what we're doing. Don't reveal the answer.">💡 Hint</button>
+        </div>
+        <div class="composer">
+          <textarea id="msg" rows="2" placeholder="Ask a question or paste your code…  (Enter to send, Shift+Enter for new line)"></textarea>
+          <button class="btn" id="send">Send</button>
+        </div>
+      </div>
+
+      <!-- QUEST -->
+      <div class="tab" id="tab-quest" hidden><div id="quest"></div></div>
+
+      <!-- LAB -->
+      <div class="tab" id="tab-lab" hidden>
+        <textarea id="code" class="editor" spellcheck="false" rows="9">name = "Python Buddy"
+print("Hello from", name)</textarea>
+        <div class="row"><button class="btn" id="runLab">▶ Run Python</button></div>
+        <pre class="out" id="out" hidden></pre>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Flash Challenge Modal (After 10 user inputs) -->
+<div id="flashModal" class="flash-overlay" hidden>
+  <div class="flash-card" id="flashCard">
+    <div id="flashQuestionView">
+      <div class="flash-header">
+        <div class="flash-tag">⚡ 10-Chat Milestone · Flash Challenge!</div>
+        <div class="flash-topic" id="flashTopic">Topic</div>
+      </div>
+      <div class="flash-q" id="flashQ"></div>
+      <pre class="flash-code" id="flashCode" hidden></pre>
+      <div class="flash-opts" id="flashOpts"></div>
+    </div>
+
+    <!-- Boom view -->
+    <div id="flashBoom" class="flash-result" hidden>
+      <div class="boom-icon">💥</div>
+      <h2 class="boom-title">BOOM! CORRECT!</h2>
+      <p class="boom-sub">+25 XP Milestone Bonus!</p>
+      <div class="boom-ring"></div>
+    </div>
+
+    <!-- Wrong view -->
+    <div id="flashWrong" class="flash-result" hidden>
+      <div class="wrong-icon">❌</div>
+      <h2 class="wrong-title">No!</h2>
+      <p class="wrong-ans" id="flashCorrectAns"></p>
+      <div class="learn-next-box">
+        <span class="learn-icon">📚</span>
+        <div>
+          <b>What to learn next:</b>
+          <p id="flashLearnNext"></p>
+        </div>
+      </div>
+      <div class="row" style="justify-content:center; margin-top:14px;">
+        <button class="btn" id="flashDismiss">Got it! Continue</button>
+      </div>
+      <div class="flash-timer" id="flashTimer">Auto-closing in 5s...</div>
+    </div>
+  </div>
+</div>
+
+<div id="party"></div>
+<div class="notice" id="notice"></div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function api(url,body){
+  const r=await fetch(url,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:undefined);
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.detail||('Server error '+r.status));
+  return d;
+}
+
+/* ================= player state (saved in this browser) ================= */
+const fresh=()=>({xp:0,streak:0,last:'',done:{},badges:[],runs:0,wins:0});
+let S; try{S={...fresh(),...JSON.parse(localStorage.getItem('pyBuddy')||'{}')}}catch{S=fresh()}
+const save=()=>localStorage.setItem('pyBuddy',JSON.stringify(S));
+const level=()=>Math.floor(S.xp/100)+1;
+const TITLES=['Newbie','Script Kid','Coder','Hacker','Wizard','Legend'];
+const title=()=>TITLES[Math.min(level()-1,TITLES.length-1)];
+
+const BADGES=[
+  {id:'first',icon:'🎯',name:'First win',test:()=>S.wins>=1},
+  {id:'fire',icon:'🔥',name:'On fire',test:()=>S.streak>=3},
+  {id:'clear',icon:'🗡️',name:'Quest clear',test:()=>Object.keys(S.done).length>=1},
+  {id:'perfect',icon:'💎',name:'Perfect run',test:()=>Object.values(S.done).some(v=>v===3)},
+  {id:'coder',icon:'⌨️',name:'Code runner',test:()=>S.runs>=5},
+  {id:'boss',icon:'🐉',name:'Boss slayer',test:()=>!!S.done.boss},
+];
+function checkBadges(){
+  const fresh=BADGES.filter(b=>!S.badges.includes(b.id)&&b.test());
+  fresh.forEach(b=>S.badges.push(b.id));
+  return fresh;
+}
+function announce(list,delay=1200){
+  list.forEach((b,i)=>setTimeout(()=>notice(`Badge unlocked: ${b.icon} ${b.name}`),delay+i*2600));
+}
+function touchStreak(){
+  const today=new Date().toDateString();
+  if(S.last===today) return;
+  const y=new Date(Date.now()-864e5).toDateString();
+  S.streak=S.last===y?S.streak+1:1; S.last=today;
+}
+
+/* ================= rewards & effects ================= */
+const CHEERS=["Woohoo! 🎉","Nailed it! 🙌","Boom! Correct! 🚀","Yesss! 🔥","Great job! ⭐"];
+const COLORS=["#FFB627","#FF8A3D","#D6336C","#6C8CFF","#7BE0B5","#B497FF"];
+function celebrate(text,xp=0,confetti=true){
+  const el=$('#party'); let h='';
+  if(confetti) for(let i=0;i<42;i++){
+    const w=7+Math.random()*5;
+    h+=`<i style="left:${2+Math.random()*96}%;width:${w}px;height:${w*1.6}px;background:${COLORS[i%COLORS.length]};animation-delay:${Math.random()*.5}s;animation-duration:${1.6+Math.random()*1.3}s"></i>`;
+  }
+  h+=`<div class="toast">${text}${xp?`<small>+${xp} XP</small>`:''}</div>`;
+  el.innerHTML=h; clearTimeout(celebrate.t); celebrate.t=setTimeout(()=>el.innerHTML='',3300);
+}
+function notice(msg){
+  const n=$('#notice'); n.textContent=msg; n.classList.add('show');
+  clearTimeout(notice.t); notice.t=setTimeout(()=>n.classList.remove('show'),2400);
+}
+function gain(n,text,big=true){
+  touchStreak();
+  const lv=level(); S.xp+=n;
+  const nb=checkBadges(); save(); renderStats(); renderBadges(); renderMap();
+  if(level()>lv) celebrate(`Level ${level()}! ${title()} 🎖️`,n,true);
+  else if(text) celebrate(text,n,big);
+  announce(nb);
+}
+function win(n,text,big=true){ S.wins++; gain(n,text,big); }
+
+function renderStats(){
+  $('#lvlNum').textContent=level(); $('#title').textContent=title();
+  const pct=S.xp%100;
+  $('#xpFill').style.width=pct+'%'; $('#xpText').textContent=`${pct} / 100 XP`;
+  $('#streak').textContent=S.streak; $('#xpTotal').textContent=S.xp;
+}
+function renderBadges(){
+  $('#badges').innerHTML=BADGES.map(b=>`<div class="badge ${S.badges.includes(b.id)?'':'locked'}" title="${b.name}"><span>${b.icon}</span>${b.name}</div>`).join('');
+}
+
+/* ================= tabs ================= */
+function showTab(t){
+  $$('.tab').forEach(e=>e.hidden=e.id!=='tab-'+t);
+  $$('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+}
+$$('.tab-btn').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+
+/* ================= quest map ================= */
+let QUESTS=[], Q=null;
+function renderMap(){
+  if(!QUESTS.length) return;
+  const open=QUESTS.findIndex(q=>!S.done[q.id]);
+  $('#map').innerHTML=QUESTS.map((q,i)=>{
+    const unlocked=i===0||S.done[QUESTS[i-1].id];
+    const st=S.done[q.id]||0;
+    const cls=st?'done':(i===open?'current':'');
+    const sub=st?'⭐'.repeat(st)+'☆'.repeat(3-st):(unlocked?(q.boss?'Boss fight':'Ready'):'Locked');
+    return `<button class="node ${cls}" data-i="${i}" ${unlocked?'':'disabled'}><span class="ico">${unlocked?q.emoji:'🔒'}</span><span><b>${esc(q.title)}</b><small>${sub}</small></span></button>`;
+  }).join('');
+}
+$('#map').addEventListener('click',e=>{const n=e.target.closest('.node'); if(n&&!n.disabled) startQuest(+n.dataset.i);});
+
+/* ================= quest play ================= */
+const hearts=n=>'❤️'.repeat(n)+'🖤'.repeat(3-n);
+function startQuest(i){ Q={i,quest:QUESTS[i],step:0,hearts:3,answered:false,ask:''}; showTab('quest'); renderQuest(); }
+
+function renderQuest(){
+  const box=$('#quest');
+  if(!Q){ box.innerHTML='<div class="empty">Pick a quest on the map to start your adventure. ⚔️</div>'; return; }
+  const q=Q.quest, n=q.questions.length;
+  const head=`<div class="qhead"><div><span class="qemoji">${q.emoji}</span> <h2>${esc(q.title)}</h2><p>${esc(q.intro)}</p></div><div class="hearts" id="hearts" title="Hearts">${hearts(Q.hearts)}</div></div>
+    <div class="dots">${Array.from({length:n+1},(_,k)=>`<i class="${k<Q.step?'on':k===Q.step?'now':''}"></i>`).join('')}</div>`;
+
+  if(Q.hearts===0){
+    box.innerHTML=head+`<div class="end"><div class="big">💥</div><h2>Out of hearts!</h2><p>No worries. Ask Buddy, then try again.</p>
+      <div class="row"><button class="btn" id="retry">Try again</button><button class="btn ghost" id="askHelp">💬 Ask Buddy</button></div></div>`;
+    return;
+  }
+  if(Q.step<n){
+    const m=q.questions[Q.step]; Q.answered=false;
+    Q.ask=`Explain this simply: "${m.q}"${m.code?'\n```python\n'+m.code+'\n```':''}`;
+    box.innerHTML=head+`<div class="qcard"><div class="qtext">${esc(m.q)}</div>${m.code?`<pre class="qcode">${esc(m.code)}</pre>`:''}
+      <div class="opts">${m.options.map((o,k)=>`<button class="opt" data-k="${k}"><b>${'ABCD'[k]}</b>${esc(o)}</button>`).join('')}</div><div id="fb"></div></div>`;
+    return;
+  }
+  if(Q.step===n){
+    const d=q.duel;
+    box.innerHTML=head+`<div class="qcard"><span class="duel-tag">⚔️ Code duel · +30 XP</span><div class="qtext">${esc(d.prompt)}</div>
+      <div class="expect"><small>Expected output</small><pre>${esc(d.expected)}</pre></div>
+      <textarea id="duelCode" class="editor" spellcheck="false" rows="6">${esc(d.starter)}</textarea>
+      <div class="row" id="duelRow"><button class="btn" id="duelRun">▶ Run &amp; check</button><button class="btn ghost" id="duelHint">💡 Hint</button></div>
+      <pre class="out" id="duelOut" hidden></pre></div>`;
+    return;
+  }
+  const r=Q.reward, hasNext=Q.i+1<QUESTS.length;
+  box.innerHTML=head+`<div class="end"><div class="big">🏆</div><h2>Quest complete!</h2><div class="stars">${'⭐'.repeat(r.stars)}${'☆'.repeat(3-r.stars)}</div>
+    <p>+${r.bonus} XP bonus</p><div class="row">${hasNext?'<button class="btn" id="nextQ">Next quest →</button>':''}<button class="btn ghost" id="replay">Replay for 3 ⭐</button></div></div>`;
+}
+
+$('#quest').addEventListener('click',async e=>{
+  const t=e.target;
+  if(t.closest('.opt')) return answer(+t.closest('.opt').dataset.k);
+  if(t.id==='nextQ') return startQuest(Q.i+1);
+  if(t.id==='replay'||t.id==='retry') return startQuest(Q.i);
+  if(t.id==='askHelp') return askBuddy(`I need help with the "${Q.quest.title}" quest. Explain the key idea simply.`);
+  if(t.id==='ask') return askBuddy(Q.ask);
+  if(t.id==='next'){ Q.step++; return renderQuest(); }
+  if(t.id==='duelHint'){ const o=$('#duelOut'); o.hidden=false; o.className='out'; o.textContent='💡 '+Q.quest.duel.hint; return; }
+  if(t.id==='duelRun') return runDuel();
+  if(t.id==='claim') return finishQuest();
+});
+
+async function answer(k){
+  if(Q.answered) return; Q.answered=true;
+  const opts=$$('.opt'); opts.forEach(o=>o.disabled=true);
+  try{
+    const r=await api('/api/check',{quest_id:Q.quest.id,index:Q.step,choice:k});
+    opts[r.answer].classList.add('right');
+    if(!r.correct){ opts[k].classList.add('wrong'); Q.hearts--; $('#hearts').textContent=hearts(Q.hearts); }
+    else win(10,pick(CHEERS),false);
+    $('#fb').innerHTML=`<div class="fb ${r.correct?'good':'bad'}"><b>${r.correct?'Correct!':'Not quite.'}</b> ${esc(r.why)}
+      <div class="row"><button class="btn" id="next">${Q.hearts===0?'Continue':'Next →'}</button><button class="btn ghost" id="ask">💬 Ask Buddy why</button></div></div>`;
+  }catch(err){ Q.answered=false; opts.forEach(o=>o.disabled=false); notice(err.message); }
+}
+
+async function runDuel(){
+  const o=$('#duelOut'); o.hidden=false; o.className='out'; o.textContent='Running…';
+  try{
+    const r=await api('/api/check_code',{quest_id:Q.quest.id,code:$('#duelCode').value});
+    o.textContent=(r.ok?'✅ Output matches!\n\n':'❌ Not yet. Your output:\n\n')+r.output;
+    o.className='out'+(r.ok?'':' err');
+    if(r.ok){
+      win(30,pick(CHEERS));
+      $('#duelRow').innerHTML='<button class="btn" id="claim">Claim reward →</button>';
+    }
+  }catch(err){ o.textContent=err.message; o.className='out err'; }
+}
+
+function finishQuest(){
+  const stars=Math.max(1,Q.hearts), bonus=20+10*stars;
+  S.done[Q.quest.id]=Math.max(S.done[Q.quest.id]||0,stars);
+  Q.reward={stars,bonus}; Q.step++;
+  gain(bonus,'Quest complete! 🏆',true);
+  renderQuest();
+}
+
+/* ================= chat ================= */
+const OPENERS={
+  Learn:"What will you learn today? Tell me a topic.",
+  Practice:"What Python topic do you want to practice?",
+  Quiz:"Which Python topic should I quiz you on?",
+  Debug:"What's going wrong? Paste your code and the error.",
+};
+let mode='Learn', busy=false;
+let msgs=[{role:'assistant',content:"Hey player! 👋 Pick a mode or tap a quick mission. "+OPENERS.Learn}];
+
+function inline(t){
+  return esc(t).replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
+}
+function md(text){
+  return text.split(/```(?:\w+)?\n?([\s\S]*?)```/g).map((p,i)=>{
+    if(i%2) return `<div class="cb"><pre><code>${esc(p.replace(/\n$/,''))}</code></pre><button class="try">▶ Try it in Code lab</button></div>`;
+    p=p.trim(); return p?inline(p):'';
+  }).join('');
+}
+function renderLog(){
+  const log=$('#log');
+  log.innerHTML=msgs.map(m=>`<div class="msg ${m.role==='user'?'user':'bot'}">${md(m.content)}</div>`).join('')
+    +(busy?'<div class="msg bot typing"><i></i><i></i><i></i></div>':'');
+  log.scrollTop=log.scrollHeight;
+}
+function setMode(m,silent){
+  if(mode===m) return;
+  mode=m; $$('.mode').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
+  if(!silent){ msgs.push({role:'assistant',content:OPENERS[m]}); renderLog(); }
+}
+$$('.mode').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+$$('.chip').forEach(b=>b.onclick=()=>{ if(b.dataset.mode) setMode(b.dataset.mode,true); sendChat(b.dataset.text); });
+
+async function sendChat(text){
+  text=(text||'').trim(); if(!text||busy) return;
+  showTab('chat');
+  const history=msgs.slice(-12);
+  msgs.push({role:'user',content:text}); busy=true; $('#msg').value=''; renderLog();
+  try{
+    const r=await api('/api/chat',{message:text,history,mode,player:{level:level(),title:title(),quest:Q?Q.quest.title:null}});
+    msgs.push({role:'assistant',content:r.reply});
+    if(r.verdict==='CORRECT') win(10,pick(CHEERS));
+    else if(r.verdict==='WRONG') celebrate("Almost! You've got this 💪",0,false);
+  }catch(err){ msgs.push({role:'assistant',content:'⚠️ '+err.message}); }
+  busy=false; renderLog();
+}
+const askBuddy=t=>sendChat(t);
+$('#send').onclick=()=>sendChat($('#msg').value);
+$('#msg').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendChat($('#msg').value); }});
+$('#log').addEventListener('click',e=>{
+  if(!e.target.classList.contains('try')) return;
+  $('#code').value=e.target.parentElement.querySelector('pre').textContent;
+  showTab('lab'); runLab();
+});
+
+/* ================= code lab ================= */
+async function runLab(){
+  const out=$('#out'); out.hidden=false; out.className='out'; out.textContent='Running…';
+  try{
+    const r=await api('/api/run',{code:$('#code').value});
+    out.textContent=r.output; out.className='out'+(r.ok?'':' err');
+    S.runs++; const nb=checkBadges(); save(); renderBadges(); announce(nb,300);
+  }catch(err){ out.textContent=err.message; out.className='out err'; }
+}
+$('#runLab').onclick=runLab;
+document.addEventListener('keydown',e=>{
+  if(e.key==='Tab'&&e.target.classList&&e.target.classList.contains('editor')){
+    e.preventDefault(); const t=e.target,s=t.selectionStart;
+    t.value=t.value.slice(0,s)+'    '+t.value.slice(t.selectionEnd); t.selectionStart=t.selectionEnd=s+4;
+  }
+});
+
+/* ================= init ================= */
+$('#reset').onclick=()=>{ if(confirm('Reset all XP, badges and quest progress?')){ localStorage.removeItem('pyBuddy'); location.reload(); } };
+renderStats(); renderBadges(); renderLog(); renderQuest();
+api('/api/quests').then(d=>{QUESTS=d; renderMap();}).catch(()=>{$('#map').innerHTML='<div class="empty">Could not load quests. Is the server running?</div>';});
+</script>
+</body>
+</html>
