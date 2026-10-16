@@ -392,18 +392,25 @@ textarea:focus{border-color:#7A8CFF; background:#fff; box-shadow:0 0 0 4px rgba(
   display:inline-flex; align-items:center; justify-content:center;
 }
 .editor{
-  background:var(--ink); color:#EAF0FF; border-color:var(--ink);
+  background:var(--ink)!important; color:#EAF0FF!important; border-color:rgba(255,255,255,.12)!important;
   font-family:ui-monospace,Consolas,monospace; font-size:.94rem; font-weight:500;
   min-height:280px; height:clamp(280px, calc(100vh - 460px), 480px);
   tab-size:4; border-radius:18px; padding:16px; line-height:1.55;
 }
+.editor:focus{
+  background:var(--ink)!important; color:#EAF0FF!important;
+  border-color:rgba(122,140,255,.6)!important;
+  box-shadow:0 0 0 4px rgba(122,140,255,.18)!important;
+  outline:none;
+}
+.editor::selection{background:rgba(122,140,255,.45)}
 .out{
-  margin:14px 0 0; background:#F8FAFF; border:1.5px solid #EBF0FF;
+  margin:14px 0 0; background:#13192E; border:1.5px solid rgba(255,255,255,.08);
   border-radius:16px; padding:14px 16px; white-space:pre-wrap;
   font-family:ui-monospace,Consolas,monospace; font-size:.92rem; font-weight:600;
-  max-height:240px; overflow-y:auto;
+  color:#C8D6FF; max-height:240px; overflow-y:auto;
 }
-.out.err{background:#FFF0F2; color:#9B1C2E; border-color:#FFD4DA}
+.out.err{background:#1E0A0E; color:#FF8096; border-color:rgba(224,58,78,.3)}
 
 /* ---------- quest ---------- */
 .qhead{display:flex; justify-content:space-between; gap:12px; align-items:flex-start}
