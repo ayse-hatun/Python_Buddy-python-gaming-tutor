@@ -42,6 +42,15 @@ KEYS = [
 
 app = FastAPI(title="Python Buddy")
 
+
+@app.middleware("http")
+async def fix_vercel_path(request: Request, call_next):
+    raw_path = request.query_params.get("__path__")
+    if raw_path:
+        sub = raw_path.lstrip("/")
+        request.scope["path"] = f"/api/{sub}"
+    return await call_next(request)
+
 # --------------------------------------------------------------------------
 #  QUESTS  (answers stay on the server)
 # --------------------------------------------------------------------------
