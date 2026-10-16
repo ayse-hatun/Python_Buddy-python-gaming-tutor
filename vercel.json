@@ -1,22 +1,16 @@
 {
-  "builds": [
+  "rewrites": [
     {
-      "src": "main.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/sitemap.xml",
-      "dest": "/sitemap.xml"
+      "source": "/sitemap.xml",
+      "destination": "/main.py"
     },
     {
-      "src": "/robots.txt",
-      "dest": "/robots.txt"
+      "source": "/robots.txt",
+      "destination": "/main.py"
     },
     {
-      "src": "/(.*)",
-      "dest": "main.py"
+      "source": "/api/(.*)",
+      "destination": "/main.py"
     }
   ]
 }
