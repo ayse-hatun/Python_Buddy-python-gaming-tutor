@@ -13,8 +13,8 @@ from pathlib import Path
 
 import requests
 import uvicorn
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, Response, PlainTextResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, Response, PlainTextResponse, JSONResponse
 from pydantic import BaseModel
 
 BASE = Path(__file__).resolve().parent
@@ -41,6 +41,16 @@ KEYS = [
 ]
 
 app = FastAPI(title="Python Buddy")
+@app.exception_handler(404)
+async def not_found_handler(request: Request, exc):
+    return JSONResponse(
+        status_code=404,
+        content={
+            "detail": "Not Found",
+            "url_path": str(request.url.path),
+            "scope_path": request.scope.get("path")
+        }
+    )
 
 # --------------------------------------------------------------------------
 #  QUESTS  (answers stay on the server)
