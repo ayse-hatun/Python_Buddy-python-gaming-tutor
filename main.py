@@ -41,16 +41,6 @@ KEYS = [
 ]
 
 app = FastAPI(title="Python Buddy")
-@app.exception_handler(404)
-async def not_found_handler(request: Request, exc):
-    return JSONResponse(
-        status_code=404,
-        content={
-            "detail": "Not Found",
-            "url_path": str(request.url.path),
-            "headers": dict(request.headers),
-        }
-    )
 
 # --------------------------------------------------------------------------
 #  QUESTS  (answers stay on the server)
