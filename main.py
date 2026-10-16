@@ -495,6 +495,7 @@ def robots():
 
 
 @app.get("/api/quests")
+@app.get("/quests")
 def quests():
     out = []
     for q in QUESTS:
@@ -511,6 +512,7 @@ def quests():
 
 
 @app.post("/api/check")
+@app.post("/check")
 def check(body: CheckIn):
     quest = QUEST_BY_ID.get(body.quest_id)
     if not quest or not (0 <= body.index < len(quest["questions"])):
@@ -520,12 +522,14 @@ def check(body: CheckIn):
 
 
 @app.post("/api/run")
+@app.post("/run")
 def run(body: CodeIn):
     ok, out = run_python(body.code)
     return {"ok": ok, "output": out}
 
 
 @app.post("/api/check_code")
+@app.post("/check_code")
 def check_code(body: CodeIn):
     quest = QUEST_BY_ID.get(body.quest_id)
     if not quest:
@@ -628,6 +632,7 @@ class FlashIn(BaseModel):
 
 
 @app.post("/api/flash_challenge")
+@app.post("/flash_challenge")
 def flash_challenge(body: FlashIn):
     if not KEYS:
         raise HTTPException(503, "No API key. Set GEMINI_API_KEY.")
@@ -674,6 +679,7 @@ def flash_challenge(body: FlashIn):
 
 
 @app.post("/api/chat")
+@app.post("/chat")
 def chat(body: ChatIn):
     if not KEYS:
         raise HTTPException(503, "No API key found. Set GEMINI_API_KEY (see README).")
