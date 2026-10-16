@@ -18,89 +18,114 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#D5DCF8;border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:#BAC4F2}
 body{
   margin:0; min-height:100vh; color:var(--ink);
   font-family:'Nunito',system-ui,sans-serif; font-weight:600;
-  background:linear-gradient(160deg,#DDEBFF 0%,#ECE6FF 55%,#FFEAF3 100%) fixed;
+  background:linear-gradient(160deg,#DCE9FF 0%,#ECE4FF 50%,#FFEBF4 100%) fixed;
 }
 h1,h2,h3{font-family:'Fredoka',system-ui,sans-serif; margin:0; color:var(--ink)}
-h3{font-size:1.05rem; margin-bottom:10px}
-.app{max-width:1240px; margin:0 auto; padding:18px}
-.card{background:#fff; border-radius:26px; padding:18px; box-shadow:0 12px 32px rgba(80,90,200,.12)}
+h3{font-size:1.1rem; margin-bottom:12px; display:flex; align-items:center; gap:8px}
+.app{
+  max-width:1440px; margin:0 auto; padding:20px 24px; min-height:100vh;
+  display:flex; flex-direction:column; box-sizing:border-box;
+}
+.card{
+  background:#fff; border-radius:26px; padding:22px;
+  box-shadow:0 14px 34px rgba(60,70,160,.09);
+  border:1.5px solid rgba(230,235,255,.9);
+  transition:box-shadow .2s ease, transform .2s ease;
+}
+.card:hover{box-shadow:0 18px 42px rgba(60,70,160,.13)}
 button{font:inherit; font-weight:800; color:var(--ink); cursor:pointer}
 button:focus-visible,textarea:focus-visible{outline:3px solid var(--ink); outline-offset:2px}
 
-/* ---------- clean & catchy gaming hero ---------- */
+/* ---------- Leveled-Up Gamer Hero & HUD ---------- */
 .hero{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:20px;
-  padding:16px 24px;
-  margin-bottom:18px;
-  border-radius:24px;
-  background:linear-gradient(135deg, #C7DCFF 0%, #D8CAFF 50%, #FFD7E8 100%);
-  border:2px solid rgba(255,255,255,0.85);
-  box-shadow:0 12px 30px rgba(70,80,200,0.14), inset 0 1px 0 rgba(255,255,255,0.9);
+  gap:24px;
+  padding:16px 26px;
+  margin-bottom:20px;
+  border-radius:28px;
+  background:linear-gradient(135deg, rgba(215,235,255,.85) 0%, rgba(230,222,255,.85) 48%, rgba(255,226,238,.85) 100%);
+  border:2px solid rgba(255,255,255,0.95);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  box-shadow:0 16px 36px rgba(70,80,200,.13), inset 0 1px 0 rgba(255,255,255,.95);
+  position:relative;
+  overflow:hidden;
+}
+.hero::after{
+  content:''; position:absolute; top:-40%; right:15%; width:280px; height:140px;
+  background:radial-gradient(circle, rgba(255,255,255,0.65) 0%, transparent 70%);
+  pointer-events:none; filter:blur(20px);
 }
 
 /* Brand */
-.brand{display:flex; gap:14px; align-items:center}
+.brand{display:flex; gap:16px; align-items:center; z-index:1}
 .logo-box{
-  width:52px;
-  height:52px;
-  border-radius:16px;
+  width:56px;
+  height:56px;
+  border-radius:18px;
   background:#fff;
   display:grid;
   place-items:center;
-  font-size:32px;
+  font-size:34px;
   line-height:1;
-  box-shadow:0 6px 16px rgba(50,60,160,0.14), 0 0 0 2px rgba(255,255,255,0.9);
-  transition:transform .2s ease;
+  box-shadow:0 8px 20px rgba(50,60,160,.16), 0 0 0 2px rgba(255,255,255,0.95);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+  flex-shrink:0;
 }
-.hero:hover .logo-box{transform:rotate(-4deg) scale(1.05)}
+.hero:hover .logo-box{transform:rotate(-6deg) scale(1.08)}
 .brand-text h1{
-  font-size:1.85rem;
-  line-height:1.15;
+  font-size:2rem;
+  line-height:1.1;
   color:var(--ink);
-  letter-spacing:-0.4px;
+  letter-spacing:-0.5px;
 }
 .brand-text p{
-  margin:2px 0 0;
+  margin:3px 0 0;
   color:var(--ink-soft);
-  font-size:0.88rem;
+  font-size:0.92rem;
   font-weight:700;
+  opacity:0.92;
 }
 
 /* Unified Gamer HUD */
 .gamer-hud{
   display:flex;
   align-items:center;
-  background:rgba(255,255,255,0.92);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  border:2px solid rgba(255,255,255,0.95);
-  border-radius:20px;
+  background:rgba(255,255,255,0.94);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:2px solid rgba(255,255,255,0.98);
+  border-radius:22px;
   padding:8px 18px;
-  box-shadow:0 8px 24px rgba(40,50,150,0.10);
+  box-shadow:0 10px 28px rgba(40,50,150,0.11);
   gap:16px;
+  z-index:1;
+  flex-wrap:nowrap;
 }
 .hud-item{display:flex; align-items:center; gap:10px}
-.hud-sep{width:1px; height:28px; background:#E2E6FA}
+.hud-sep{width:1px; height:32px; background:#E4E8FA}
 
 /* Level & XP inside HUD */
 .lvl-badge{
-  width:42px;
-  height:42px;
-  border-radius:13px;
+  width:44px;
+  height:44px;
+  border-radius:14px;
   display:grid;
   place-items:center;
   font-family:'Fredoka',sans-serif;
   font-weight:700;
-  font-size:1.3rem;
+  font-size:1.35rem;
   color:#fff;
   background:linear-gradient(135deg,var(--gold),var(--gold-deep));
-  box-shadow:0 4px 12px rgba(255,138,61,0.4);
+  box-shadow:0 6px 16px rgba(255,138,61,0.45);
   flex:none;
 }
 .xpwrap{min-width:130px}
@@ -138,7 +163,7 @@ button:focus-visible,textarea:focus-visible{outline:3px solid var(--ink); outlin
 .hud-stat{display:flex; align-items:baseline; gap:5px; white-space:nowrap}
 .hud-stat b{
   font-family:'Fredoka',sans-serif;
-  font-size:1.1rem;
+  font-size:1.12rem;
   color:var(--ink);
 }
 .hud-stat small{
@@ -147,108 +172,269 @@ button:focus-visible,textarea:focus-visible{outline:3px solid var(--ink); outlin
   color:var(--ink-soft);
 }
 
-@media(max-width:960px){
-  .hero{flex-direction:column; align-items:stretch; gap:14px; padding:16px}
-  .gamer-hud{justify-content:space-between; flex-wrap:wrap; gap:10px}
+/* HUD Goal Interactive Pill */
+.hud-goal-btn{
+  background:#F4F6FF;
+  border:1.5px solid #E4E8FF;
+  padding:5px 12px;
+  border-radius:16px;
+  cursor:pointer;
+  transition:all .18s ease;
+  display:flex; align-items:center; gap:8px;
+}
+.hud-goal-btn:hover{
+  background:#fff;
+  border-color:#8C9CFF;
+  transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(140,156,255,.18);
+}
+.hud-goal-wrap{flex-direction:column; align-items:flex-start; gap:1px}
+.hud-goal-wrap b{
+  font-family:'Fredoka',sans-serif;
+  font-size:0.92rem;
+  color:var(--ink);
+  line-height:1.1;
+  max-width:130px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.hud-goal-wrap small{
+  font-size:0.72rem;
+  font-weight:800;
+  color:var(--pink);
+  line-height:1;
 }
 
-/* ---------- layout ---------- */
-.grid{display:grid; grid-template-columns:320px 1fr; gap:16px; align-items:start}
-aside{display:flex; flex-direction:column; gap:16px}
-@media(max-width:900px){.grid{grid-template-columns:1fr}}
+@media(max-width:1080px){
+  .hero{flex-direction:column; align-items:stretch; gap:16px; padding:18px}
+  .gamer-hud{justify-content:space-between; flex-wrap:wrap; gap:12px}
+}
+
+/* ---------- layout & space utilization ---------- */
+.grid{
+  display:grid;
+  grid-template-columns:360px 1fr;
+  gap:20px;
+  align-items:stretch;
+  flex:1;
+}
+aside{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+.main-card{
+  display:flex;
+  flex-direction:column;
+  min-height:640px;
+}
+@media(max-width:960px){
+  .grid{grid-template-columns:1fr}
+  .main-card{min-height:auto}
+}
 
 /* ---------- quest map ---------- */
-.map{display:flex; flex-direction:column; gap:8px}
-.node{
-  display:flex; align-items:center; gap:12px; width:100%; padding:9px 12px; border:none; border-radius:18px;
-  background:#F1F3FF; text-align:left; transition:transform .15s ease;
+.map{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-height:calc(100vh - 430px);
+  min-height:280px;
+  overflow-y:auto;
+  padding-right:4px;
 }
-.node:hover:not(:disabled){transform:translateX(3px)}
-.node .ico{width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:#fff; font-size:1.3rem}
+.node{
+  display:flex; align-items:center; gap:12px; width:100%; padding:10px 14px;
+  border:1.5px solid #EBF0FF; border-radius:18px;
+  background:#F8FAFF; text-align:left; transition:all .18s ease;
+}
+.node:hover:not(:disabled){
+  transform:translateX(4px);
+  border-color:#8C9CFF;
+  background:#fff;
+  box-shadow:0 6px 16px rgba(140,156,255,.15);
+}
+.node .ico{
+  width:44px; height:44px; border-radius:14px; display:grid; place-items:center;
+  background:#fff; font-size:1.35rem; box-shadow:0 4px 10px rgba(60,70,160,.08);
+  flex-shrink:0;
+}
 .node small{display:block; color:var(--ink-soft); font-weight:700}
-.node.done{background:var(--mint)}
-.node.current{background:linear-gradient(135deg,#FFE9B8,#FFD3A1); box-shadow:0 8px 18px rgba(255,138,61,.25)}
+.node.done{
+  background:linear-gradient(135deg,#E6FAF1 0%,#DCF7EA 100%);
+  border-color:#A3ECD0;
+}
+.node.current{
+  background:linear-gradient(135deg,#FFF3D6 0%,#FFE5C4 100%);
+  border-color:var(--gold);
+  box-shadow:0 8px 22px rgba(255,138,61,.22);
+}
 .node:disabled{opacity:.55; cursor:not-allowed}
 
 /* ---------- badges ---------- */
-.badges{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
-.badge{background:var(--lav); border-radius:16px; padding:10px 4px; text-align:center; font-size:.72rem; line-height:1.2}
-.badge span{display:block; font-size:1.6rem}
+.badges{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+.badge{
+  background:linear-gradient(135deg,#F1EDFF 0%,#E7E0FF 100%);
+  border:1.5px solid rgba(255,255,255,.8);
+  border-radius:18px; padding:12px 6px; text-align:center;
+  font-size:.74rem; font-weight:800; color:var(--ink);
+  transition:all .18s ease;
+  box-shadow:0 4px 12px rgba(100,80,200,.08);
+}
+.badge span{display:block; font-size:1.65rem; margin-bottom:2px}
+.badge:hover:not(.locked){
+  transform:translateY(-2px);
+  box-shadow:0 8px 18px rgba(100,80,200,.16);
+}
 .badge.locked{filter:grayscale(1); opacity:.45}
-.linkbtn{margin-top:12px; background:none; border:none; color:var(--ink-soft); text-decoration:underline; font-weight:700; font-size:.8rem; padding:0}
+.linkbtn{margin-top:12px; background:none; border:none; color:var(--ink-soft); text-decoration:underline; font-weight:700; font-size:.82rem; padding:0; cursor:pointer}
+.linkbtn:hover{color:var(--ink)}
 
 /* ---------- tabs ---------- */
-.tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px}
-.tab-btn{border:none; border-radius:999px; padding:9px 18px; background:#F1F3FF; color:var(--ink-soft)}
-.tab-btn.active{background:var(--ink); color:#fff; box-shadow:0 6px 14px rgba(30,42,90,.25)}
+.tabs{
+  display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;
+  border-bottom:2px solid #F1F4FF; padding-bottom:14px;
+}
+.tab-btn{
+  border:none; border-radius:999px; padding:10px 22px;
+  background:#F1F4FF; color:var(--ink-soft); font-weight:800; font-size:.95rem;
+  transition:all .2s ease; display:inline-flex; align-items:center; gap:8px;
+}
+.tab-btn:hover{background:#E6EBFF; color:var(--ink)}
+.tab-btn.active{
+  background:var(--ink); color:#fff;
+  box-shadow:0 8px 20px rgba(30,42,90,.28); transform:translateY(-1px);
+}
 
 /* ---------- buttons ---------- */
-.btn{border:none; border-radius:16px; padding:11px 20px; background:linear-gradient(135deg,var(--gold),var(--gold-deep)); box-shadow:0 8px 18px rgba(255,138,61,.35)}
-.btn:hover{filter:brightness(1.05)}
-.btn.ghost{background:#F1F3FF; box-shadow:none}
+.btn{
+  border:none; border-radius:16px; padding:12px 22px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-deep));
+  box-shadow:0 8px 20px rgba(255,138,61,.35);
+  transition:all .18s ease;
+}
+.btn:hover:not(:disabled){
+  filter:brightness(1.06); transform:translateY(-1px);
+  box-shadow:0 10px 24px rgba(255,138,61,.45);
+}
+.btn.ghost{background:#F1F4FF; box-shadow:none; color:var(--ink)}
+.btn.ghost:hover:not(:disabled){background:#E6EBFF; filter:none}
 .btn:disabled{opacity:.6; cursor:not-allowed}
-.row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+.row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
 
-/* ---------- chat ---------- */
-.modes{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px}
-.mode{border:none; border-radius:999px; padding:7px 16px; background:#F1F3FF; color:var(--ink-soft)}
-.mode.active{background:var(--ink); color:#fff}
-.log{height:420px; overflow-y:auto; background:#F7F8FF; border-radius:22px; padding:16px; display:flex; flex-direction:column; gap:12px}
-.msg{max-width:88%; padding:12px 16px; border-radius:20px; line-height:1.55; animation:pop .2s ease}
-.msg.bot{align-self:flex-start; background:#fff; color:var(--ink); border-bottom-left-radius:6px; box-shadow:0 6px 16px rgba(80,90,200,.12)}
-.msg.user{align-self:flex-end; background:linear-gradient(135deg,var(--pink),var(--pink-deep)); color:#fff; border-bottom-right-radius:6px; box-shadow:0 8px 18px rgba(166,30,87,.28)}
-.msg code{background:#F1F3FF; padding:1px 6px; border-radius:6px; font-family:ui-monospace,Consolas,monospace; font-size:.92em}
-.msg.user code{background:rgba(255,255,255,.22)}
-.cb{margin:8px 0 2px; border-radius:14px; background:var(--ink); overflow:hidden}
-.cb pre{margin:0; padding:12px 14px; overflow-x:auto; color:#EAF0FF; font-family:ui-monospace,Consolas,monospace; font-size:.9rem; font-weight:500}
+/* ---------- chat space utilization ---------- */
+.modes{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:14px}
+.mode{
+  border:1.5px solid transparent; border-radius:999px; padding:7px 16px;
+  background:#F1F4FF; color:var(--ink-soft); font-size:.88rem; font-weight:800;
+  transition:all .15s ease;
+}
+.mode:hover{background:#E6EBFF; color:var(--ink)}
+.mode.active{background:var(--ink); color:#fff; box-shadow:0 4px 12px rgba(30,42,90,.2)}
+.log{
+  flex:1;
+  height:clamp(440px, calc(100vh - 430px), 640px);
+  overflow-y:auto;
+  background:#F8FAFF; border:1.5px solid #EBF0FF;
+  border-radius:24px; padding:20px;
+  display:flex; flex-direction:column; gap:14px;
+  box-shadow:inset 0 2px 8px rgba(60,70,160,.04);
+}
+.msg{
+  max-width:84%; padding:14px 18px; border-radius:22px;
+  line-height:1.6; font-size:.96rem;
+  animation:pop .2s cubic-bezier(.18,.89,.32,1.2);
+  word-break:break-word;
+}
+.msg.bot{
+  align-self:flex-start; background:#fff; color:var(--ink);
+  border-bottom-left-radius:6px; border:1.5px solid #EDF1FF;
+  box-shadow:0 6px 20px rgba(60,70,180,.07);
+}
+.msg.user{
+  align-self:flex-end; background:linear-gradient(135deg,var(--pink) 0%,var(--pink-deep) 100%);
+  color:#fff; border-bottom-right-radius:6px;
+  box-shadow:0 8px 22px rgba(166,30,87,.28);
+}
+.msg code{background:#F1F3FF; padding:2px 7px; border-radius:7px; font-family:ui-monospace,Consolas,monospace; font-size:.92em}
+.msg.user code{background:rgba(255,255,255,.24)}
+.cb{margin:10px 0 4px; border-radius:16px; background:var(--ink); overflow:hidden; box-shadow:0 8px 22px rgba(30,42,90,.18)}
+.cb pre{margin:0; padding:14px 16px; overflow-x:auto; color:#EAF0FF; font-family:ui-monospace,Consolas,monospace; font-size:.92rem; font-weight:500; line-height:1.5}
 .cb pre code{background:none; padding:0; color:inherit}
-.cb .try{display:block; width:100%; border:none; padding:7px; background:rgba(255,255,255,.14); color:#fff}
-.cb .try:hover{background:rgba(255,255,255,.24)}
-.typing{display:flex; gap:5px; padding:14px 16px}
+.cb .try{
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  width:100%; border:none; padding:9px; background:rgba(255,255,255,.14); color:#fff;
+  font-size:.86rem; font-weight:700; transition:background .15s ease;
+}
+.cb .try:hover{background:rgba(255,255,255,.26)}
+.typing{display:flex; gap:5px; padding:14px 18px}
 .typing i{width:8px; height:8px; border-radius:50%; background:#B7BDE8; animation:blink 1s infinite}
 .typing i:nth-child(2){animation-delay:.15s} .typing i:nth-child(3){animation-delay:.3s}
 @keyframes blink{50%{transform:translateY(-4px); background:var(--pink)}}
 @keyframes pop{from{opacity:0; transform:translateY(6px) scale(.98)}}
-.chips{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0}
-.chip{border:none; border-radius:999px; padding:7px 14px; font-size:.88rem}
+.chips{display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 6px}
+.chip{
+  border:none; border-radius:999px; padding:8px 16px; font-size:.88rem; font-weight:700;
+  transition:all .15s ease; cursor:pointer;
+}
+.chip:hover{transform:translateY(-2px); filter:brightness(.95)}
 .chip:nth-child(1){background:var(--sky)} .chip:nth-child(2){background:var(--blush)} .chip:nth-child(3){background:var(--mint)} .chip:nth-child(4){background:var(--lav)}
-.composer{display:flex; gap:10px; align-items:flex-end}
-textarea{width:100%; border:2px solid #E6E9FF; border-radius:16px; background:#FAFBFF; padding:11px 14px; font:inherit; font-weight:600; color:var(--ink); resize:vertical}
-textarea:focus{border-color:#8C9CFF; box-shadow:0 0 0 4px rgba(140,156,255,.2); outline:none}
-.editor{background:var(--ink); color:#EAF0FF; border-color:var(--ink); font-family:ui-monospace,Consolas,monospace; font-size:.92rem; font-weight:500; min-height:150px; tab-size:4}
-.out{margin:12px 0 0; background:#F7F8FF; border-radius:14px; padding:12px 14px; white-space:pre-wrap; font-family:ui-monospace,Consolas,monospace; font-size:.9rem; font-weight:500}
-.out.err{background:#FFF0F2; color:#9B1C2E}
+.composer{display:flex; gap:12px; align-items:flex-end; margin-top:12px}
+textarea{
+  width:100%; border:2px solid #E4E8FF; border-radius:18px; background:#FAFBFF;
+  padding:12px 16px; font:inherit; font-weight:600; color:var(--ink); resize:none;
+  min-height:50px; max-height:130px; transition:all .18s ease; line-height:1.5;
+}
+textarea:focus{border-color:#7A8CFF; background:#fff; box-shadow:0 0 0 4px rgba(122,140,255,.18); outline:none}
+.composer .btn{
+  padding:12px 24px; border-radius:18px; height:50px;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.editor{
+  background:var(--ink); color:#EAF0FF; border-color:var(--ink);
+  font-family:ui-monospace,Consolas,monospace; font-size:.94rem; font-weight:500;
+  min-height:280px; height:clamp(280px, calc(100vh - 460px), 480px);
+  tab-size:4; border-radius:18px; padding:16px; line-height:1.55;
+}
+.out{
+  margin:14px 0 0; background:#F8FAFF; border:1.5px solid #EBF0FF;
+  border-radius:16px; padding:14px 16px; white-space:pre-wrap;
+  font-family:ui-monospace,Consolas,monospace; font-size:.92rem; font-weight:600;
+  max-height:240px; overflow-y:auto;
+}
+.out.err{background:#FFF0F2; color:#9B1C2E; border-color:#FFD4DA}
 
 /* ---------- quest ---------- */
 .qhead{display:flex; justify-content:space-between; gap:12px; align-items:flex-start}
-.qhead h2{display:inline; font-size:1.5rem}
-.qhead p{margin:4px 0 0; color:var(--ink-soft)}
-.qemoji{font-size:1.8rem}
-.hearts{font-size:1.4rem; white-space:nowrap}
-.dots{display:flex; gap:6px; margin:14px 0}
-.dots i{flex:1; height:8px; border-radius:999px; background:#EEF1FF}
+.qhead h2{display:inline; font-size:1.6rem}
+.qhead p{margin:4px 0 0; color:var(--ink-soft); font-size:1rem}
+.qemoji{font-size:2rem}
+.hearts{font-size:1.5rem; white-space:nowrap}
+.dots{display:flex; gap:8px; margin:16px 0}
+.dots i{flex:1; height:8px; border-radius:999px; background:#EEF1FF; transition:background .3s}
 .dots i.on{background:var(--ok)} .dots i.now{background:var(--gold)}
-.qcard{background:#F7F8FF; border-radius:22px; padding:18px}
-.qtext{font-weight:800; font-size:1.1rem; margin-bottom:10px}
-.qcode{margin:0 0 12px; background:var(--ink); color:#EAF0FF; padding:12px 14px; border-radius:14px; font-family:ui-monospace,Consolas,monospace; font-size:.92rem; font-weight:500; overflow-x:auto}
-.opts{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.qcard{background:#F8FAFF; border:1.5px solid #EBF0FF; border-radius:24px; padding:22px}
+.qtext{font-weight:800; font-size:1.15rem; margin-bottom:12px; color:var(--ink)}
+.qcode{margin:0 0 14px; background:var(--ink); color:#EAF0FF; padding:14px 16px; border-radius:16px; font-family:ui-monospace,Consolas,monospace; font-size:.94rem; font-weight:500; overflow-x:auto}
+.opts{display:grid; grid-template-columns:1fr 1fr; gap:12px}
 @media(max-width:600px){.opts{grid-template-columns:1fr}}
-.opt{display:flex; gap:10px; align-items:center; text-align:left; border:2px solid #E6E9FF; background:#fff; border-radius:16px; padding:12px 14px; transition:transform .12s ease}
-.opt b{width:28px; height:28px; border-radius:9px; display:grid; place-items:center; background:var(--lav); flex:none}
-.opt:hover:not(:disabled){transform:translateY(-2px); border-color:#8C9CFF}
+.opt{display:flex; gap:12px; align-items:center; text-align:left; border:2px solid #E6E9FF; background:#fff; border-radius:18px; padding:13px 16px; transition:all .15s ease}
+.opt b{width:30px; height:30px; border-radius:10px; display:grid; place-items:center; background:var(--lav); flex:none; font-family:'Fredoka',sans-serif}
+.opt:hover:not(:disabled){transform:translateY(-2px); border-color:#8C9CFF; box-shadow:0 6px 16px rgba(140,156,255,.15)}
 .opt.right{background:var(--mint); border-color:var(--ok)}
 .opt.wrong{background:#FFE4E8; border-color:var(--bad); animation:shake .35s}
 @keyframes shake{25%{transform:translateX(-5px)} 75%{transform:translateX(5px)}}
-.fb{margin-top:14px; padding:12px 14px; border-radius:14px; background:#fff}
+.fb{margin-top:16px; padding:14px 16px; border-radius:16px; background:#fff; box-shadow:0 4px 14px rgba(60,70,160,.06)}
 .fb.good{border-left:5px solid var(--ok)} .fb.bad{border-left:5px solid var(--bad)}
-.duel-tag{display:inline-block; background:var(--pink); color:#fff; border-radius:999px; padding:3px 12px; font-size:.8rem; margin-bottom:8px}
-.expect small{color:var(--ink-soft)}
-.expect pre{margin:4px 0 12px; background:#fff; padding:8px 12px; border-radius:12px; font-family:ui-monospace,Consolas,monospace; font-weight:500}
-.end{text-align:center; padding:26px 10px}
-.end .big{font-size:64px}
+.duel-tag{display:inline-block; background:var(--pink); color:#fff; border-radius:999px; padding:4px 14px; font-size:.82rem; margin-bottom:10px}
+.expect small{color:var(--ink-soft); font-weight:700}
+.expect pre{margin:6px 0 14px; background:#fff; padding:10px 14px; border-radius:14px; border:1px solid #EBF0FF; font-family:ui-monospace,Consolas,monospace; font-weight:600}
+.end{text-align:center; padding:30px 10px}
+.end .big{font-size:72px}
 .end .row{justify-content:center}
-.stars{font-size:2rem; margin:6px 0}
-.empty{text-align:center; color:var(--ink-soft); padding:50px 10px}
+.stars{font-size:2.2rem; margin:8px 0}
+.empty{text-align:center; color:var(--ink-soft); padding:50px 10px; font-weight:700}
 
 /* ---------- celebration ---------- */
 #party{position:fixed; inset:0; pointer-events:none; z-index:9999; overflow:hidden}
@@ -339,13 +525,97 @@ textarea:focus{border-color:#8C9CFF; box-shadow:0 0 0 4px rgba(140,156,255,.2); 
 .learn-next-box p{margin:4px 0 0; font-size:.9rem; color:#7A4215; font-weight:700; line-height:1.45}
 .flash-timer{font-size:.78rem; color:var(--ink-soft); margin-top:8px}
 
-.chat-counter-pill{
-  margin-left:auto; font-size:.8rem; font-weight:800; color:var(--ink-soft);
-  background:#F1F3FF; padding:5px 12px; border-radius:999px; display:flex; align-items:center; gap:4px;
-  cursor:pointer; transition:transform .12s ease;
+.goal-btn-pill{
+  font-size:.82rem; font-weight:800; color:var(--ink-soft);
+  background:#F4F6FF; padding:6px 16px; border-radius:999px;
+  cursor:pointer; transition:all .18s ease; border:1.5px solid #E4E8FF;
+  letter-spacing:.3px; white-space:nowrap;
 }
-.chat-counter-pill:hover{transform:scale(1.04); background:#E6E9FF}
-.chat-counter-pill b{color:var(--pink)}
+.goal-btn-pill:hover{background:#fff; border-color:#8C9CFF; color:var(--ink); transform:translateY(-1px); box-shadow:0 4px 12px rgba(140,156,255,.15);}
+
+/* ---------- First-Time Onboarding Modal ---------- */
+.onboard-overlay{
+  position:fixed; inset:0; background:rgba(20,28,65,.68);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  display:flex; align-items:center; justify-content:center;
+  z-index:10001; padding:16px;
+  animation:flashFadeIn .2s ease-out;
+}
+.onboard-card{
+  background:#fff; border-radius:26px; max-width:550px; width:100%;
+  padding:26px 28px; box-shadow:0 24px 60px rgba(70,80,200,.22);
+  position:relative; max-height:92vh; overflow-y:auto;
+  border:2px solid rgba(255,255,255,0.95);
+  animation:pop .25s cubic-bezier(.18,.89,.32,1.2);
+}
+.onboard-header{
+  margin:-26px -28px 18px -28px;
+  padding:22px 28px 18px;
+  background:linear-gradient(135deg, #DCEBFF 0%, #E7E0FF 50%, #FFE4EF 100%);
+  border-bottom:2px solid rgba(255,255,255,0.85);
+  border-radius:26px 26px 0 0;
+}
+.onboard-header h2{
+  font-size:1.55rem; margin:0 0 4px; color:var(--ink); font-family:'Fredoka',sans-serif;
+  letter-spacing:-0.3px;
+}
+.onboard-header p{
+  margin:0; font-size:.9rem; color:var(--ink-soft); font-weight:700;
+}
+.onboard-section{margin-bottom:16px}
+.onboard-label{
+  display:flex; align-items:center; gap:8px;
+  font-size:.82rem; font-weight:800; color:var(--ink); margin-bottom:8px;
+  text-transform:uppercase; letter-spacing:.5px;
+}
+.onboard-label::before{
+  content:''; display:inline-block; width:4px; height:13px;
+  border-radius:2px; background:linear-gradient(180deg,var(--pink),var(--gold));
+}
+.onboard-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px}
+@media(max-width:540px){.onboard-grid{grid-template-columns:1fr}}
+.onboard-choice{
+  display:flex; flex-direction:column; align-items:flex-start; text-align:left; gap:3px;
+  border:2px solid #E6E9FF; background:#FAFBFF; border-radius:16px; padding:11px 13px;
+  font-family:'Nunito',sans-serif; font-weight:700; font-size:.88rem; color:var(--ink);
+  cursor:pointer; transition:all .18s ease;
+}
+.onboard-choice small{font-size:.76rem; font-weight:700; color:var(--ink-soft)}
+.onboard-choice:hover{
+  border-color:#8C9CFF; background:#fff; transform:translateY(-2px);
+  box-shadow:0 8px 18px rgba(80,90,200,.10);
+}
+.onboard-choice.active{
+  border-color:var(--pink); background:#fff; color:var(--pink-deep);
+  box-shadow:0 6px 20px rgba(214,51,108,.16), inset 0 0 0 1px var(--pink);
+}
+.onboard-choice.active small{color:var(--pink)}
+.onboard-chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:6px}
+.onboard-chip{
+  border:none; border-radius:999px; padding:7px 15px; font-size:.84rem; font-weight:800;
+  cursor:pointer; transition:all .15s ease; color:var(--ink);
+}
+.onboard-chip:nth-child(4n+1){background:var(--sky)}
+.onboard-chip:nth-child(4n+2){background:var(--blush)}
+.onboard-chip:nth-child(4n+3){background:var(--mint)}
+.onboard-chip:nth-child(4n+4){background:var(--lav)}
+.onboard-chip:hover{transform:translateY(-2px); filter:brightness(.96)}
+.onboard-chip.active{
+  background:var(--ink)!important; color:#fff!important;
+  box-shadow:0 6px 14px rgba(30,42,90,.25); transform:scale(1.03);
+}
+.onboard-input{
+  width:100%; border:2px solid #E6E9FF; border-radius:16px; background:#FAFBFF;
+  padding:11px 14px; font:inherit; font-weight:600; font-size:.9rem; color:var(--ink);
+  margin-top:8px; transition:border-color .15s ease, box-shadow .15s ease;
+}
+.onboard-input:focus{
+  border-color:#8C9CFF; box-shadow:0 0 0 4px rgba(140,156,255,.2); outline:none; background:#fff;
+}
+.onboard-actions{
+  display:flex; gap:12px; justify-content:flex-end; align-items:center;
+  margin-top:22px; padding-top:16px; border-top:2px solid #F1F3FF;
+}
 
 @media(prefers-reduced-motion:reduce){#party i{display:none} *{animation-duration:.01ms!important}}
 </style>
@@ -389,6 +659,14 @@ textarea:focus{border-color:#8C9CFF; box-shadow:0 0 0 4px rgba(140,156,255,.2); 
           <small>XP</small>
         </div>
       </div>
+      <div class="hud-sep"></div>
+      <button class="hud-item hud-goal-btn" id="headerGoalBtn" title="Current Study Goal · Click to customize">
+        <span class="hud-icon">🎯</span>
+        <div class="hud-stat hud-goal-wrap">
+          <b id="hudGoalTopic">Python Basics</b>
+          <small id="hudGoalLevel">Beginner · Goal</small>
+        </div>
+      </button>
     </div>
   </header>
 
@@ -397,11 +675,14 @@ textarea:focus{border-color:#8C9CFF; box-shadow:0 0 0 4px rgba(140,156,255,.2); 
       <section class="card"><h3>🗺️ Quest map</h3><div id="map" class="map"><div class="empty">Loading quests…</div></div></section>
       <section class="card">
         <h3>🏅 Badges</h3><div id="badges" class="badges"></div>
-        <button class="linkbtn" id="reset">Reset progress</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+          <button class="linkbtn" id="openGoalLink" style="margin-top:0">Learning profile</button>
+          <button class="linkbtn" id="reset" style="margin-top:0">Reset progress</button>
+        </div>
       </section>
     </aside>
 
-    <section class="card">
+    <section class="card main-card">
       <nav class="tabs" role="tablist">
         <button class="tab-btn active" data-tab="chat">💬 Buddy chat</button>
         <button class="tab-btn" data-tab="quest">⚔️ Quest</button>
@@ -415,7 +696,7 @@ textarea:focus{border-color:#8C9CFF; box-shadow:0 0 0 4px rgba(140,156,255,.2); 
           <button class="mode" data-mode="Practice">Practice</button>
           <button class="mode" data-mode="Quiz">Quiz</button>
           <button class="mode" data-mode="Debug">Debug</button>
-          <div class="chat-counter-pill" id="chatCounterPill" title="Milestone challenge every 10 messages">⚡ Challenge: <b id="chatCountNum">0</b>/10</div>
+          <button class="goal-btn-pill" id="goalBtn" title="Customize your learning profile" style="margin-left:auto"><span id="goalBadge">Beginner</span> · <span id="goalTopicLabel">Python Basics</span></button>
         </div>
         <div class="log" id="log" aria-live="polite"></div>
         <div class="chips" id="chips">
@@ -480,7 +761,85 @@ print("Hello from", name)</textarea>
       <div class="row" style="justify-content:center; margin-top:14px;">
         <button class="btn" id="flashDismiss">Got it! Continue</button>
       </div>
-      <div class="flash-timer" id="flashTimer">Auto-closing in 5s...</div>
+    </div>
+  </div>
+</div>
+
+<!-- First-Time Onboarding Modal -->
+<div id="onboardModal" class="onboard-overlay" hidden>
+  <div class="onboard-card">
+    <div class="onboard-header">
+      <h2>Learning Setup</h2>
+      <p>Configure your Python difficulty level and current study topic.</p>
+    </div>
+
+    <!-- Question 1: Experience / Scratch -->
+    <div class="onboard-section">
+      <label class="onboard-label">Experience Level</label>
+      <div class="onboard-grid" id="onboardScratch">
+        <button type="button" class="onboard-choice active" data-val="Yes, from scratch">
+          <span>From Scratch</span>
+          <small>First time learning</small>
+        </button>
+        <button type="button" class="onboard-choice" data-val="Have some basics">
+          <span>Some Basics</span>
+          <small>Familiar with syntax</small>
+        </button>
+        <button type="button" class="onboard-choice" data-val="Experienced coder">
+          <span>Experienced</span>
+          <small>Other languages</small>
+        </button>
+      </div>
+    </div>
+
+    <!-- Question 2: Difficulty Level -->
+    <div class="onboard-section">
+      <label class="onboard-label">Difficulty Level</label>
+      <div class="onboard-grid" id="onboardDifficulty">
+        <button type="button" class="onboard-choice active" data-val="Beginner">
+          <span>Beginner</span>
+          <small>Step-by-step fundamentals</small>
+        </button>
+        <button type="button" class="onboard-choice" data-val="Intermediate">
+          <span>Intermediate</span>
+          <small>Practical coding &amp; logic</small>
+        </button>
+        <button type="button" class="onboard-choice" data-val="Advanced">
+          <span>Advanced</span>
+          <small>In-depth concepts</small>
+        </button>
+      </div>
+    </div>
+
+    <!-- Question 3: Topic -->
+    <div class="onboard-section">
+      <label class="onboard-label">Study Topic</label>
+      <div class="onboard-chips" id="onboardTopicChips">
+        <button type="button" class="onboard-chip active" data-topic="Python Basics &amp; Variables">Variables</button>
+        <button type="button" class="onboard-chip" data-topic="If / Else Conditions">Conditions</button>
+        <button type="button" class="onboard-chip" data-topic="Loops (for &amp; while)">Loops</button>
+        <button type="button" class="onboard-chip" data-topic="Lists &amp; Dictionaries">Lists &amp; Dicts</button>
+        <button type="button" class="onboard-chip" data-topic="Functions &amp; Scope">Functions</button>
+        <button type="button" class="onboard-chip" data-topic="OOP &amp; Classes">OOP</button>
+      </div>
+      <input type="text" id="onboardCustomTopic" class="onboard-input" placeholder="Custom topic (e.g. File I/O, Recursion, APIs)..." value="Python Basics &amp; Variables">
+    </div>
+
+    <!-- Question 4: Confusion -->
+    <div class="onboard-section">
+      <label class="onboard-label">Specific Confusion or Focus (Optional)</label>
+      <div class="onboard-chips" id="onboardConfusionChips">
+        <button type="button" class="onboard-chip" data-text="Syntax &amp; indentation">Syntax &amp; indentation</button>
+        <button type="button" class="onboard-chip" data-text="When to use it in code">When to use it</button>
+        <button type="button" class="onboard-chip" data-text="Writing logic from scratch">Writing logic</button>
+        <button type="button" class="onboard-chip" data-text="Debugging errors">Debugging errors</button>
+      </div>
+      <input type="text" id="onboardConfusionInput" class="onboard-input" placeholder="e.g. When to use a while loop instead of a for loop">
+    </div>
+
+    <div class="onboard-actions">
+      <button type="button" class="btn ghost" id="onboardSkip">Skip</button>
+      <button type="button" class="btn" id="onboardSubmit">Save &amp; Continue</button>
     </div>
   </div>
 </div>
@@ -500,10 +859,36 @@ async function api(url,body){
   return d;
 }
 
-/* ================= player state (saved in this browser) ================= */
-const fresh=()=>({xp:0,streak:0,last:'',done:{},badges:[],runs:0,wins:0});
+const fresh=()=>({
+  xp:0, streak:0, last:'', done:{}, badges:[], runs:0, wins:0,
+  onboarded: false,
+  profile: {
+    difficulty: 'Beginner',
+    scratch: 'Yes, from scratch',
+    topic: 'Python Basics & Variables',
+    confusion: ''
+  }
+});
 let S; try{S={...fresh(),...JSON.parse(localStorage.getItem('pyBuddy')||'{}')}}catch{S=fresh()}
 const save=()=>localStorage.setItem('pyBuddy',JSON.stringify(S));
+function renderGoalBadge(){
+  const g=$('#goalBadge');
+  if(g && S.profile) g.textContent=S.profile.difficulty||'Beginner';
+  const gTopic=$('#goalTopicLabel');
+  if(gTopic && S.profile){
+    const shortT=(S.profile.topic||'Python Basics').split('&')[0].trim();
+    gTopic.textContent=shortT.length>18?shortT.slice(0,18)+'…':shortT;
+  }
+  const hTopic=$('#hudGoalTopic');
+  const hLevel=$('#hudGoalLevel');
+  if(hTopic && S.profile) {
+    const shortT = (S.profile.topic || 'Python Basics').split('&')[0].trim();
+    hTopic.textContent = shortT;
+  }
+  if(hLevel && S.profile) {
+    hLevel.textContent = (S.profile.difficulty || 'Beginner') + ' · Goal';
+  }
+}
 const level=()=>Math.floor(S.xp/100)+1;
 const TITLES=['Newbie','Script Kid','Coder','Hacker','Wizard','Legend'];
 const title=()=>TITLES[Math.min(level()-1,TITLES.length-1)];
@@ -656,11 +1041,18 @@ async function runDuel(){
   const o=$('#duelOut'); o.hidden=false; o.className='out'; o.textContent='Running…';
   try{
     const r=await api('/api/check_code',{quest_id:Q.quest.id,code:$('#duelCode').value});
-    o.textContent=(r.ok?'✅ Output matches!\n\n':'❌ Not yet. Your output:\n\n')+r.output;
-    o.className='out'+(r.ok?'':' err');
     if(r.ok){
+      o.textContent='✅ Output matches!\n\n'+r.output;
+      o.className='out';
       win(30,pick(CHEERS));
       $('#duelRow').innerHTML='<button class="btn" id="claim">Claim reward →</button>';
+    } else if(r.feedback){
+      // Hardcode / logic rejection message from server
+      o.textContent=r.feedback+'\n\nYour output:\n'+r.output;
+      o.className='out err';
+    } else {
+      o.textContent='❌ Not yet. Your output:\n\n'+r.output;
+      o.className='out err';
     }
   }catch(err){ o.textContent=err.message; o.className='out err'; }
 }
@@ -681,7 +1073,37 @@ const OPENERS={
   Debug:"What's going wrong? Paste your code and the error.",
 };
 let mode='Learn', busy=false;
-let msgs=[{role:'assistant',content:"Hey player! 👋 Pick a mode or tap a quick mission. "+OPENERS.Learn}];
+let chatCount=0; // counts user messages sent; flash challenge every 10
+function getWelcomeMessage(p){
+  p=p||S.profile||{};
+  let t=`Welcome to Python Buddy.\n\n`+
+    `Your learning profile is set to **${esc(p.topic||'Python Basics & Variables')}** at **${esc(p.difficulty||'Beginner')}** level (${p.scratch==='Yes, from scratch'?'starting from scratch':p.scratch}).`;
+  if(p.confusion && p.confusion.trim()){
+    t+=`\n\nFocus: You noted difficulty with "${esc(p.confusion.trim())}". Explanations and missions will focus on clarifying this concept.`;
+  }
+  t+=`\n\nSelect a mode or enter a question below to begin.`;
+  return t;
+}
+
+function updateTopicChips(p){
+  p=p||S.profile||{};
+  const shortTopic=(p.topic||'Python').split('&')[0].trim();
+  const c=$('#chips');
+  if(!c) return;
+  c.innerHTML=`
+    <button class="chip" data-mode="Learn" data-text="Explain ${esc(shortTopic)} simply.">Explain ${esc(shortTopic)}</button>
+    <button class="chip" data-mode="Practice" data-text="Give me one small coding mission on ${esc(shortTopic)}.">Mission on ${esc(shortTopic)}</button>
+    <button class="chip" data-mode="Quiz" data-text="Quiz me on ${esc(shortTopic)}. One question.">Quiz me</button>
+    ${p.confusion ? `<button class="chip" data-mode="Learn" data-text="Can you explain this simply: ${esc(p.confusion)}?">💡 Clear my confusion</button>` : `<button class="chip" data-text="Give me one small hint about ${esc(shortTopic)}.">💡 Tip</button>`}
+  `;
+  c.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{
+    if(b.dataset.mode) setMode(b.dataset.mode,true);
+    sendChat(b.dataset.text);
+  });
+}
+
+let msgs=[{role:'assistant',content:getWelcomeMessage(S.profile)}];
+function updateChatPill(){ /* counter pill removed */ }
 
 function inline(t){
   return esc(t).replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
@@ -710,14 +1132,30 @@ async function sendChat(text){
   text=(text||'').trim(); if(!text||busy) return;
   showTab('chat');
   const history=msgs.slice(-12);
-  msgs.push({role:'user',content:text}); busy=true; $('#msg').value=''; renderLog();
+  msgs.push({role:'user',content:text}); busy=true; $('#msg').value='';
+  chatCount++; updateChatPill(); renderLog();
   try{
-    const r=await api('/api/chat',{message:text,history,mode,player:{level:level(),title:title(),quest:Q?Q.quest.title:null}});
+    const r=await api('/api/chat',{
+      message:text,
+      history,
+      mode,
+      player:{
+        level:level(),
+        title:title(),
+        quest:Q?Q.quest.title:null,
+        difficulty:S.profile?.difficulty||'Beginner',
+        scratch:S.profile?.scratch||'Yes, from scratch',
+        topic:S.profile?.topic||'Python Basics & Variables',
+        confusion:S.profile?.confusion||''
+      }
+    });
     msgs.push({role:'assistant',content:r.reply});
     if(r.verdict==='CORRECT') win(10,pick(CHEERS));
     else if(r.verdict==='WRONG') celebrate("Almost! You've got this 💪",0,false);
   }catch(err){ msgs.push({role:'assistant',content:'⚠️ '+err.message}); }
   busy=false; renderLog();
+  // Trigger flash challenge every 10 user messages
+  if(chatCount>0 && chatCount%10===0) setTimeout(showFlashChallenge,600);
 }
 const askBuddy=t=>sendChat(t);
 $('#send').onclick=()=>sendChat($('#msg').value);
@@ -745,9 +1183,166 @@ document.addEventListener('keydown',e=>{
   }
 });
 
+/* ================= Flash Challenge (AI-generated from chat topics) ================= */
+let _flashAnswer=-1, _flashTimer=null, _flashWhy='';
+
+async function showFlashChallenge(){
+  // Call AI to generate a challenge based on chat history
+  try{
+    const data=await api('/api/flash_challenge',{history:msgs.slice(-20)});
+    _flashAnswer=data.answer;
+    _flashWhy=data.why||'';
+    $('#flashTopic').textContent=(data.emoji||'⚡')+' '+( data.topic||'Python');
+    $('#flashQ').textContent=data.question;
+    const fc=$('#flashCode'); fc.hidden=!data.code; fc.textContent=data.code||'';
+    $('#flashOpts').innerHTML=data.options.map((o,k)=>
+      `<button class="flash-opt" data-k="${k}"><b>${'ABCD'[k]}</b>${esc(o)}</button>`
+    ).join('');
+  }catch(err){
+    // Fallback: use quest pool if AI fails
+    const pool=[];
+    QUESTS.forEach(q=>q.questions.forEach(m=>{
+      pool.push({topic:q.title, emoji:q.emoji, q:m.q, code:m.code||'', options:m.options, answer:m.answer, why:m.why||''});
+    }));
+    if(!pool.length) return;
+    const item=pick(pool);
+    _flashAnswer=item.answer; _flashWhy=item.why;
+    $('#flashTopic').textContent=item.emoji+' '+item.topic;
+    $('#flashQ').textContent=item.q;
+    const fc=$('#flashCode'); fc.hidden=!item.code; fc.textContent=item.code||'';
+    $('#flashOpts').innerHTML=item.options.map((o,k)=>
+      `<button class="flash-opt" data-k="${k}"><b>${'ABCD'[k]}</b>${esc(o)}</button>`
+    ).join('');
+  }
+  $('#flashQuestionView').hidden=false;
+  $('#flashBoom').hidden=true;
+  $('#flashWrong').hidden=true;
+  $('#flashCard').classList.remove('booming');
+  $('#flashModal').hidden=false;
+
+  // Auto-close after 30s if user doesn't interact
+  clearTimeout(_flashTimer);
+  _flashTimer=setTimeout(()=>{ $('#flashModal').hidden=true; },30000);
+}
+
+$('#flashOpts').addEventListener('click',e=>{
+  const btn=e.target.closest('.flash-opt'); if(!btn) return;
+  $$('.flash-opt').forEach(b=>b.disabled=true);
+  const k=+btn.dataset.k;
+  clearTimeout(_flashTimer);
+  if(k===_flashAnswer){
+    btn.classList.add('selected-right');
+    $('#flashQuestionView').hidden=true;
+    $('#flashBoom').hidden=false;
+    $('#flashCard').classList.add('booming');
+    setTimeout(()=>{ const r=document.createElement('div'); r.className='boom-ring'; $('#flashCard').appendChild(r); setTimeout(()=>r.remove(),900); },50);
+    win(25,'⚡ Milestone Bonus! +25 XP 🎉');
+    setTimeout(()=>{ $('#flashModal').hidden=true; },2800);
+  } else {
+    btn.classList.add('selected-wrong');
+    $$('.flash-opt')[_flashAnswer].classList.add('selected-right');
+    $('#flashCorrectAns').textContent='Correct answer: '+['A','B','C','D'][_flashAnswer]+'. '+_flashWhy;
+    $('#flashLearnNext').textContent='Ask Buddy about this topic for a deeper explanation.';
+    $('#flashQuestionView').hidden=true;
+    $('#flashWrong').hidden=false;
+    let secs=5;
+    const timerEl=$('#flashTimer');
+    const tick=()=>{ timerEl.textContent='Auto-closing in '+secs+'s...'; if(--secs<0){ $('#flashModal').hidden=true; } else { _flashTimer=setTimeout(tick,1000); } };
+    tick();
+  }
+});
+$('#flashDismiss').onclick=()=>{ clearTimeout(_flashTimer); $('#flashModal').hidden=true; };
+
+/* ================= First-Time Onboarding Modal ================= */
+function openOnboardingModal(){
+  const p=S.profile||{difficulty:'Beginner',scratch:'Yes, from scratch',topic:'Python Basics & Variables',confusion:''};
+  $$('#onboardScratch .onboard-choice').forEach(b=>b.classList.toggle('active',b.dataset.val===p.scratch));
+  $$('#onboardDifficulty .onboard-choice').forEach(b=>b.classList.toggle('active',b.dataset.val===p.difficulty));
+  $('#onboardCustomTopic').value=p.topic||'Python Basics & Variables';
+  $$('#onboardTopicChips .onboard-chip').forEach(b=>b.classList.toggle('active',b.dataset.topic===p.topic));
+  $('#onboardConfusionInput').value=p.confusion||'';
+  $$('#onboardConfusionChips .onboard-chip').forEach(b=>b.classList.toggle('active',!!(p.confusion&&p.confusion.includes(b.dataset.text))));
+  $('#onboardModal').hidden=false;
+}
+
+function closeOnboardingModal(){
+  $('#onboardModal').hidden=true;
+}
+
+$('#onboardScratch').addEventListener('click',e=>{
+  const b=e.target.closest('.onboard-choice'); if(!b) return;
+  $$('#onboardScratch .onboard-choice').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+});
+
+$('#onboardDifficulty').addEventListener('click',e=>{
+  const b=e.target.closest('.onboard-choice'); if(!b) return;
+  $$('#onboardDifficulty .onboard-choice').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+});
+
+$('#onboardTopicChips').addEventListener('click',e=>{
+  const b=e.target.closest('.onboard-chip'); if(!b) return;
+  $$('#onboardTopicChips .onboard-chip').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  $('#onboardCustomTopic').value=b.dataset.topic;
+});
+
+$('#onboardCustomTopic').addEventListener('input',e=>{
+  const val=e.target.value.trim().toLowerCase();
+  $$('#onboardTopicChips .onboard-chip').forEach(x=>x.classList.toggle('active',x.dataset.topic.toLowerCase()===val));
+});
+
+$('#onboardConfusionChips').addEventListener('click',e=>{
+  const b=e.target.closest('.onboard-chip'); if(!b) return;
+  b.classList.toggle('active');
+  const input=$('#onboardConfusionInput');
+  const text=b.dataset.text;
+  if(b.classList.contains('active')){
+    input.value=input.value ? (input.value+', '+text) : text;
+  }
+});
+
+$('#onboardSubmit').addEventListener('click',()=>{
+  const scratch=($('#onboardScratch .onboard-choice.active')?.dataset.val)||'Yes, from scratch';
+  const difficulty=($('#onboardDifficulty .onboard-choice.active')?.dataset.val)||'Beginner';
+  const topic=$('#onboardCustomTopic').value.trim()||'Python Basics & Variables';
+  const confusion=$('#onboardConfusionInput').value.trim();
+
+  S.onboarded=true;
+  S.profile={difficulty,scratch,topic,confusion};
+  save();
+  renderGoalBadge();
+  updateTopicChips(S.profile);
+  closeOnboardingModal();
+
+  msgs=[{role:'assistant',content:getWelcomeMessage(S.profile)}];
+  renderLog();
+  gain(15, "Whoo! Let's go! 🚀", true);
+  notice(`Profile saved: ${topic} (${difficulty})`);
+});
+
+$('#onboardSkip').addEventListener('click',()=>{
+  if(!S.onboarded){
+    S.onboarded=true;
+    S.profile=S.profile||{difficulty:'Beginner',scratch:'Yes, from scratch',topic:'Python Basics & Variables',confusion:''};
+    save();
+  }
+  renderGoalBadge();
+  updateTopicChips(S.profile);
+  closeOnboardingModal();
+});
+
+const goalBtn=$('#goalBtn'); if(goalBtn) goalBtn.onclick=openOnboardingModal;
+const openGoalLink=$('#openGoalLink'); if(openGoalLink) openGoalLink.onclick=openOnboardingModal;
+const headerGoalBtn=$('#headerGoalBtn'); if(headerGoalBtn) headerGoalBtn.onclick=openOnboardingModal;
+
 /* ================= init ================= */
-$('#reset').onclick=()=>{ if(confirm('Reset all XP, badges and quest progress?')){ localStorage.removeItem('pyBuddy'); location.reload(); } };
-renderStats(); renderBadges(); renderLog(); renderQuest();
+$('#reset').onclick=()=>{ if(confirm('Reset all XP, badges, quests, and learning goals?')){ localStorage.removeItem('pyBuddy'); location.reload(); } };
+renderStats(); renderBadges(); renderGoalBadge(); updateTopicChips(S.profile); renderLog(); renderQuest(); updateChatPill();
+if(!S.onboarded){
+  openOnboardingModal();
+}
 api('/api/quests').then(d=>{QUESTS=d; renderMap();}).catch(()=>{$('#map').innerHTML='<div class="empty">Could not load quests. Is the server running?</div>';});
 </script>
 </body>

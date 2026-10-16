@@ -28,7 +28,7 @@ except ImportError:
 from google import genai
 from google.genai import types
 
-MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
+MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash-lite")
 
 # One or more keys; if one fails (quota etc.) the next is tried.
 KEYS = [
@@ -238,6 +238,55 @@ def _norm(s: str) -> str:
     return "\n".join(line.rstrip() for line in s.strip().splitlines())
 
 
+def _is_hardcoded(code: str, expected: str) -> bool:
+    """Return True if the code is likely just printing the expected answer verbatim."""
+    import re
+    stripped = code.strip()
+    # Only flag single-statement code that literally contains the expected output
+    lines = [l.strip() for l in stripped.splitlines() if l.strip() and not l.strip().startswith('#')]
+    if len(lines) > 1:
+        return False
+    # Check if the single line is a bare print with the literal expected value
+    expected_clean = expected.strip().replace('\n', ' ')
+    pattern = re.compile(
+        r'^print\s*\(\s*[\'"]' + re.escape(expected_clean) + r'[\'"]\s*\)$'
+    )
+    return bool(pattern.match(lines[0])) if lines else False
+
+
+CODE_REVIEW_PROMPT = """
+You are a strict Python tutor grading a beginner's coding exercise.
+
+Task description: {prompt}
+Expected output: {expected}
+Starter code given to the student:
+```python
+{starter}
+```
+Student's submitted code:
+```python
+{code}
+```
+
+Your job: check whether the student's code uses CORRECT LOGIC to solve the task.
+Do NOT just check if the output matches — verify the actual code logic line by line.
+
+Check ALL of these:
+1. Does the code actually implement what the task asks? (e.g. if asked to use a loop, did they use a loop?)
+2. Does the code use variables, operators, control flow, or functions as the task requires?
+3. Is the code NOT just a hardcoded print statement that dumps the expected output literally?
+4. Does the code follow the intent of any starter code provided? (e.g. if a function skeleton is given, did they complete it properly?)
+5. Would the code still work correctly if the input values were changed? (conceptual check)
+
+Reply with EXACTLY one of these (no extra text):
+- LOGIC_OK — if the code genuinely solves the task with proper logic
+- HARDCODED — if the code just prints the expected output literally without real logic
+- BAD_LOGIC — if the output might match but the logic is wrong, hacky, or doesn't follow the task requirements
+
+Reply ONLY with one of those three words. No explanation.
+"""
+
+
 # --------------------------------------------------------------------------
 #  Chat prompt  (short answers, game voice, accepts beginner to advanced coding)
 # --------------------------------------------------------------------------
@@ -263,6 +312,12 @@ MODES (follow only the current one)
 - Quiz: ask ONE question at a time as A/B/C choices or a short answer. Wait. Then give a one-line why and ask the next one.
 - Debug: name the cause in 1-2 sentences, show only the fixed line, explain in one short sentence.
 - If the player just switched modes, an opening question was already shown. Do not repeat it.
+
+PERSONALIZATION & ADAPTIVE COACHING
+- Check the player context for: target difficulty level (Beginner/Intermediate/Advanced), whether they are learning from scratch for the first time, focus topic, and any specific confusion they have.
+- If the player is learning from scratch for the first time: assume zero prior CS background, use clear everyday metaphors, avoid unexplained jargon, and take gentle, bite-sized steps.
+- If the player is intermediate or advanced: skip over basic definitions, talk directly about implementation patterns, Pythonic idioms, and edge cases.
+- If the player stated a specific confusion (e.g. "how loops terminate", "difference between list and tuple"): directly address, clarify, and dispel that confusion in your response and check questions!
 
 REACTION TAGS
 - Only when the latest message answers a question YOU asked (quiz or practice) and you have checked it,
@@ -313,7 +368,7 @@ def generate_openrouter(key: str, history: list[dict], final_text: str) -> str:
 
     models_to_try = [
         os.getenv("OPENROUTER_MODEL"),
-        "google/gemini-3.5-flash-lite",
+        "google/gemini-2.0-flash-lite",
         "google/gemini-2.5-flash",
     ]
     models_to_try = [m for m in models_to_try if m]
@@ -441,8 +496,146 @@ def check_code(body: CodeIn):
     if not quest:
         raise HTTPException(404, "Unknown quest")
     ok, out = run_python(body.code)
-    passed = ok and _norm(out) == _norm(quest["duel"]["expected"])
-    return {"ok": passed, "output": out}
+    if not ok:
+        return {"ok": False, "output": out, "feedback": ""}
+
+    output_matches = _norm(out) == _norm(quest["duel"]["expected"])
+    if not output_matches:
+        return {"ok": False, "output": out, "feedback": "Output doesn't match. Check your code and try again."}
+
+    # Fast-path hardcode rejection (no AI call needed)
+    if _is_hardcoded(body.code, quest["duel"]["expected"]):
+        return {
+            "ok": False,
+            "output": out,
+            "feedback": "🚫 Hardcoded answer detected! Write real code that calculates the result.",
+        }
+
+    # AI logic review — MANDATORY. Output matching alone is not enough.
+    if not KEYS:
+        raise HTTPException(503, "Logic review requires an API key. Set GEMINI_API_KEY.")
+
+    prompt_text = CODE_REVIEW_PROMPT.format(
+        prompt=quest["duel"]["prompt"],
+        expected=quest["duel"]["expected"],
+        starter=quest["duel"]["starter"],
+        code=body.code,
+    )
+
+    verdict = None
+    last_err = None
+    for key in KEYS:
+        try:
+            if key.startswith("sk-or-") or key.startswith("sk-"):
+                verdict = generate_openrouter(key, [], prompt_text)
+            else:
+                contents = build_contents([], prompt_text)
+                client = genai.Client(api_key=key)
+                verdict = generate_gemini(client, contents)
+            if verdict:
+                break
+        except Exception as e:
+            last_err = e
+            continue
+
+    if not verdict:
+        raise HTTPException(502, f"Logic review failed: {str(last_err)[:200]}")
+
+    verdict = verdict.strip().upper()
+
+    if verdict.startswith("HARDCODED"):
+        return {
+            "ok": False,
+            "output": out,
+            "feedback": "🚫 Your output is right, but you just hardcoded the answer. Use real code logic!",
+        }
+    if verdict.startswith("BAD_LOGIC"):
+        return {
+            "ok": False,
+            "output": out,
+            "feedback": "⚠️ Output matches, but your logic doesn't follow the task. Re-read the prompt and try a different approach.",
+        }
+    # LOGIC_OK
+    return {"ok": True, "output": out, "feedback": ""}
+
+
+# --------------------------------------------------------------------------
+#  Flash Challenge generation (AI-generated MCQ based on chat topics)
+# --------------------------------------------------------------------------
+FLASH_CHALLENGE_PROMPT = """
+You are a Python quiz generator. Based on the recent chat conversation below,
+generate ONE multiple-choice question that tests the Python topic(s) discussed.
+
+The question should:
+- Be directly related to what was discussed in the chat
+- Test understanding of the Python concept (not trivia)
+- Have exactly 4 options labeled A, B, C, D
+- Have exactly one correct answer
+- Include a short code snippet if relevant
+- Include a brief explanation of why the correct answer is right
+
+Recent chat:
+{chat_summary}
+
+Reply in EXACTLY this JSON format (no extra text, no markdown fences):
+{{"topic": "short topic name", "emoji": "relevant emoji", "question": "the question text", "code": "optional python code or empty string", "options": ["option A", "option B", "option C", "option D"], "answer": 0, "why": "short explanation"}}
+
+Rules:
+- "answer" is the 0-based index of the correct option
+- "code" should be a short Python snippet if the question involves reading code, otherwise empty string
+- Keep question and options concise
+- Reply with ONLY the JSON object, nothing else
+"""
+
+
+class FlashIn(BaseModel):
+    history: list[dict] = []
+
+
+@app.post("/api/flash_challenge")
+def flash_challenge(body: FlashIn):
+    if not KEYS:
+        raise HTTPException(503, "No API key. Set GEMINI_API_KEY.")
+    if not body.history:
+        raise HTTPException(400, "No chat history provided.")
+
+    # Build a summary of recent chat for the AI
+    recent = body.history[-20:]  # last 20 messages for context
+    chat_summary = "\n".join(
+        f"{'User' if h.get('role') == 'user' else 'Buddy'}: {str(h.get('content', ''))[:300]}"
+        for h in recent
+    )
+    prompt_text = FLASH_CHALLENGE_PROMPT.format(chat_summary=chat_summary)
+
+    import json as _json
+    last_err = None
+    for key in KEYS:
+        try:
+            if key.startswith("sk-or-") or key.startswith("sk-"):
+                raw = generate_openrouter(key, [], prompt_text)
+            else:
+                contents = build_contents([], prompt_text)
+                client = genai.Client(api_key=key)
+                raw = generate_gemini(client, contents)
+            if raw:
+                # Strip markdown fences if present
+                raw = raw.strip()
+                if raw.startswith("```"):
+                    raw = raw.split("\n", 1)[1] if "\n" in raw else raw[3:]
+                if raw.endswith("```"):
+                    raw = raw[:-3]
+                raw = raw.strip()
+                data = _json.loads(raw)
+                # Validate structure
+                assert "question" in data and "options" in data and "answer" in data
+                assert isinstance(data["options"], list) and len(data["options"]) == 4
+                assert isinstance(data["answer"], int) and 0 <= data["answer"] <= 3
+                return data
+        except Exception as e:
+            last_err = e
+            continue
+
+    raise HTTPException(502, f"Flash challenge generation failed: {str(last_err)[:200]}")
 
 
 @app.post("/api/chat")
@@ -452,9 +645,22 @@ def chat(body: ChatIn):
 
     mode = body.mode if body.mode in MODE_HINTS else "Learn"
     p = body.player or {}
+    ctx_parts = [
+        MODE_HINTS[mode],
+        f"Player level {p.get('level', 1)} ({p.get('title', 'Newbie')})",
+        f"Current quest: {p.get('quest') or 'none'}",
+    ]
+    if p.get("difficulty"):
+        ctx_parts.append(f"Target difficulty: {p.get('difficulty')}")
+    if p.get("scratch"):
+        ctx_parts.append(f"Learning from scratch: {p.get('scratch')}")
+    if p.get("topic"):
+        ctx_parts.append(f"Focus topic: {p.get('topic')}")
+    if p.get("confusion"):
+        ctx_parts.append(f"User confusion: {p.get('confusion')}")
+
     final = (
-        f"[Game context: {MODE_HINTS[mode]} Player level {p.get('level', 1)} "
-        f"({p.get('title', 'Newbie')}). Current quest: {p.get('quest') or 'none'}.]\n\n"
+        f"[Game context: {'; '.join(ctx_parts)}]\n\n"
         f"Player says:\n{body.message[:2000]}"
     )
 
