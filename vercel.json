@@ -1,16 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/sitemap.xml",
-      "destination": "/main.py"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "/main.py"
-    },
-    {
       "source": "/api/(.*)",
-      "destination": "/main.py"
+      "destination": "/api/index.py"
     }
   ]
 }
