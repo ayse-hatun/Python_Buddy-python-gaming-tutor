@@ -14,7 +14,7 @@ from pathlib import Path
 import requests
 import uvicorn
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response, PlainTextResponse
 from pydantic import BaseModel
 
 BASE = Path(__file__).resolve().parent
@@ -457,6 +457,41 @@ class CodeIn(BaseModel):
 @app.get("/")
 def home():
     return FileResponse(BASE / "index.html")
+
+
+SITEMAP_XML = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://pythonbuddy.vercel.app/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+"""
+
+ROBOTS_TXT = """User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://pythonbuddy.vercel.app/sitemap.xml
+"""
+
+
+@app.get("/sitemap.xml")
+def sitemap():
+    path = BASE / "sitemap.xml"
+    if path.exists():
+        return FileResponse(path, media_type="application/xml")
+    return Response(content=SITEMAP_XML, media_type="application/xml")
+
+
+@app.get("/robots.txt")
+def robots():
+    path = BASE / "robots.txt"
+    if path.exists():
+        return PlainTextResponse(path.read_text(encoding="utf-8"))
+    return PlainTextResponse(ROBOTS_TXT)
 
 
 @app.get("/api/quests")
