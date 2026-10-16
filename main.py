@@ -48,7 +48,7 @@ async def not_found_handler(request: Request, exc):
         content={
             "detail": "Not Found",
             "url_path": str(request.url.path),
-            "scope_path": request.scope.get("path")
+            "headers": dict(request.headers),
         }
     )
 
